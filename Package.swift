@@ -21,6 +21,9 @@ let package = Package(
         .target(
             name: "swift_helpers",
             dependencies: []),
+        .target(
+            name: "Functional",
+            dependencies: []),
         .testTarget(
             name: "swift_helpersTests",
             dependencies: ["swift_helpers"]),
