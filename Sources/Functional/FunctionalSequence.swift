@@ -73,7 +73,7 @@ public func <*> <T, U, S: Sequence>(fs: [(T) -> U], a: S) -> [U] where
  *
  * - returns: A value of type `[U]`
  */
-public func >>- <T, U, S: Sequence>(a: S, f: (T) -> [U]) -> [U] where
+public func >>= <T, U, S: Sequence>(a: S, f: (T) -> [U]) -> [U] where
     S.Iterator.Element == T
 {
     return a.flatMap(f)
@@ -89,7 +89,7 @@ public func >>- <T, U, S: Sequence>(a: S, f: (T) -> [U]) -> [U] where
  *
  * - returns: A value of type `[U]`
  */
-public func -<< <T, U, S: Sequence>(f: (T) -> [U], a: S) -> [U] where
+public func =<< <T, U, S: Sequence>(f: (T) -> [U], a: S) -> [U] where
     S.Iterator.Element == T
 {
     
@@ -111,7 +111,7 @@ public func >-> <A, B, C>(
     f: @escaping (A) -> [B],
     g: @escaping (B) -> [C]
 ) -> (A) -> [C] {
-    return { x in f(x) >>- g }
+    return { x in f(x) >>= g }
 }
 
 /**
@@ -129,7 +129,7 @@ public func <-< <A, B, C>(
     f: @escaping (B) -> [C],
     g: @escaping (A) -> [B]
 ) -> (A) -> [C] {
-    return { x in g(x) >>- f }
+    return { x in g(x) >>= f }
 }
 
 /**
