@@ -10,6 +10,10 @@ let package = Package(
         .library(
             name: "swift_helpers",
             targets: ["swift_helpers"]),
+        .library(
+            name: "Functional",
+            targets: ["Functional"]
+        )
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
