@@ -38,7 +38,7 @@
  *  - Returns: An array that is the result of applying `f` to `a` and flattening
  *  the result.
  */
-public func =<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
+public func -<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
     return a.flatMap(f)
 
 }
@@ -54,7 +54,7 @@ public func =<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
  *  - Returns: An array that is the result of applying `f` to `a` and flattening
  *  the result.
  */
-public func >>= <T, U>(a: [T], f: (T) -> U?) -> [U] {
+public func >>- <T, U>(a: [T], f: (T) -> U?) -> [U] {
     return a.flatMap(f)
 }
 

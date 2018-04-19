@@ -81,7 +81,7 @@ public func <*> <T, U>(f: ((T) -> U)?, a: T?) -> U? {
  *
  * - Returns: A value of type `Optional<U>`.
  */
-public func >>= <T, U>(a: T?, f: (T) -> U?) -> U? {
+public func >>- <T, U>(a: T?, f: (T) -> U?) -> U? {
     return a.flatMap(f)
 }
 
@@ -100,7 +100,7 @@ public func >>= <T, U>(a: T?, f: (T) -> U?) -> U? {
  *
  * - Returns: A value of type `Optional<U>`.
  */
-public func =<< <T, U>(f: (T) -> U?, a: T?) -> U? {
+public func -<< <T, U>(f: (T) -> U?, a: T?) -> U? {
     return a.flatMap(f)
 }
 
@@ -125,7 +125,7 @@ public func >-> <A, B, C>(
     f: @escaping (A) -> B?,
     g: @escaping (B) -> C?
 ) -> (A) -> C? {
-    return { x in f(x) >>= g }
+    return { x in f(x) >>- g }
 }
 
 /**
@@ -149,7 +149,7 @@ public func <-< <A, B, C>(
     f: @escaping (B) -> C?,
     g: @escaping (A) -> B?
 ) -> (A) -> C? {
-    return { x in g(x) >>= f }
+    return { x in g(x) >>- f }
 }
 
 /**
