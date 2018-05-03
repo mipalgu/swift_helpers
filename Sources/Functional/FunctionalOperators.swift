@@ -53,32 +53,40 @@ infix operator <^> : LeftFunctionalPrecedence
 infix operator <*> : LeftFunctionalPrecedence
 
 /**
- * Like `<*>` but disregard the right argument.
+ *  Like `<*>` but disregard the right argument.
  *
- * Expected function type: `f a -> f b -> f a`
+ *  Expected function type: `f a -> f b -> f a`
  */
 infix operator <* : LeftFunctionalPrecedence
 
 /**
- * Like `<*>` but disregard the left argument.
+ *  Like `<*>` but disregard the left argument.
  *
- * Expected function type: `f a -> f b -> f b`
+ *  Expected function type: `f a -> f b -> f b`
  */
 infix operator *> : LeftFunctionalPrecedence
+
+/**
+ *  Try the first applicative, which returns if successful, otherwise `<|>` 
+ *  will try the second applicative.
+ *
+ *  Expected function type: `f a -> f a -> f a`
+ */
+infix operator <|> : LeftFunctionalPrecedence
 
 /**
  *  Map a function over a value with context and flatten the result.
  *
  *  Expected function type: `m a -> (a -> m b) -> m b`.
  */
-infix operator >>= : LeftFunctionalPrecedence
+infix operator >>- : LeftFunctionalPrecedence
 
 /**
  *  Map a function over a value with context and flatten the result.
  *
  *  Expected function type: `(a -> m b) -> m a -> m b`.
  */
-infix operator =<< : RightFunctionalPrecedence
+infix operator -<< : RightFunctionalPrecedence
 
 /**
  *  Compose two functions that produce results in a context, from left to right,
