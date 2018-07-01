@@ -2,5 +2,5 @@ import XCTest
 @testable import swift_helpersTests
 
 XCTMain([
-    StringHelpersTests.allTests
+    testCase(StringHelpersTests.allTests)
 ])
