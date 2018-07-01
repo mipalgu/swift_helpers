@@ -140,10 +140,7 @@ public final class FileHelpers {
     }
 
     public func overwriteDirectory(_ dir: URL, ignoringSubFiles subfiles: [URL]) -> URL? {
-        if true == subfiles.isEmpty {
-            return self.overwriteDirectory(dir)
-        }
-        guard let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
+        guard false == subfiles.isEmpty, let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
             return self.overwriteDirectory(dir)
         } 
         let deleteFiles = contents.lazy.map { URL(fileURLWithPath: $0) }.filter { subfile in
@@ -162,7 +159,7 @@ public final class FileHelpers {
 
     public func path(_ path: URL, isWithin parent: URL) -> Bool {
         let zipped = zip(path.absoluteURL.pathComponents, parent.absoluteURL.pathComponents)
-        return nil == zipped.first { $0 != $1 }
+        return nil == zipped.reversed().first { $0 != $1 }
     }
 
     public func read(_ file: URL) -> String? {
