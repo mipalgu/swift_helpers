@@ -139,9 +139,30 @@ public final class FileHelpers {
         return dir
     }
 
-    public func overwriteSubDirectory(_ subdir: String, inDirectory dir: URL) -> URL? {
+    public func overwriteDirectory(_ dir: URL, ignoringSubFiles subfiles: [URL]) -> URL? {
+        if true == subfiles.isEmpty {
+            return self.overwriteDirectory(dir)
+        }
+        guard let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
+            return self.overwriteDirectory(dir)
+        } 
+        let deleteFiles = contents.lazy.map { URL(fileURLWithPath: $0) }.filter { subfile in
+            nil == subfiles.first {
+                $0.absoluteURL == subfile.absoluteURL
+            } && (false == subfile.hasDirectoryPath || nil == subfiles.first { self.path($0, isWithin: subfile) })
+        }
+        deleteFiles.forEach { self.deleteItem(atPath: $0) }
+        return dir
+    }
+
+    public func overwriteSubDirectory(_ subdir: String, inDirectory dir: URL, ignoringSubFiles subfiles: [URL] = []) -> URL? {
         let fullPath = dir.appendingPathComponent(subdir, isDirectory: true)
-        return self.overwriteDirectory(fullPath)
+        return self.overwriteDirectory(fullPath, ignoringSubFiles: subfiles)
+    }
+
+    public func path(_ path: URL, isWithin parent: URL) -> Bool {
+        let zipped = zip(path.absoluteURL.pathComponents, parent.absoluteURL.pathComponents)
+        return nil == zipped.first { $0 != $1 }
     }
 
     public func read(_ file: URL) -> String? {
