@@ -146,7 +146,7 @@ public final class FileHelpers {
         let deleteFiles = contents.lazy.map { URL(fileURLWithPath: $0) }.filter { subfile in
             nil == subfiles.first {
                 $0.absoluteURL == subfile.absoluteURL
-            } && (false == subfile.hasDirectoryPath || nil == subfiles.first { self.path($0, isWithin: subfile) })
+            } && (true == subfile.isFileURL || nil == subfiles.first { self.path($0, isWithin: subfile) })
         }
         deleteFiles.forEach { self.deleteItem(atPath: $0) }
         return dir
