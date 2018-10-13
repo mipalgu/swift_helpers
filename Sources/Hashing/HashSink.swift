@@ -72,12 +72,22 @@
  */
 public struct HashSink<T: Hashable> {
 
-    fileprivate var sink: Set<Int> = []
+    fileprivate var sink: Set<Int>
 
     /**
      *  Create an empty `HashSink`.
      */
-    public init() {}
+    public init() { self.sink = [] }
+
+    /**
+     *  Creates an empty `HashSink` with preallocated space for at least the
+     *  specified number of elements.
+     *
+     *  - Parameter minimumCapacity: The minimum number of elements that the
+     *  newly created `HashSink` should be able to store without reallocating
+     *  memory.
+     */
+    public init(minimumCapacity: Int) { self.sink = Set(minimumCapacity: minimumCapacity) }
 
     /**
      *  Add a value to the sink.
