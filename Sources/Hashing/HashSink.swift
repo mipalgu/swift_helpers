@@ -65,6 +65,10 @@
  *  most cases) a huge reduction in memory for algorithms which do not need to
  *  keep values in memory and instead only wish to know if a particular value
  *  has already been processed.
+ *
+ *  - Attention: Since this uses the swift standard library `Hasher`, please
+ *  do not persist this structure as there is no guarantee that the hash values
+ *  will be the same between different executions.
  */
 public struct HashSink<T: Hashable> {
 

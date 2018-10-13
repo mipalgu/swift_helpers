@@ -56,6 +56,16 @@
  *
  */
 
+/**
+ *  Fetch the hash value for a particular `Hashable` value.
+ *
+ *  Uses the swift standard library `Hasher` functions in order to compute the
+ *  hash of the value.
+ *
+ *  - Attention: Since this uses the swift standard library `Hasher`, please
+ *  do not persist the hash values returned by this function as there is no
+ *  guarantee that they will be the same between different executions.
+ */
 public func hashValue<H: Hashable>(of value: H) -> Int {
     var hasher = Hasher()
     hasher.combine(value)
