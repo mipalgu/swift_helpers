@@ -90,15 +90,6 @@ public struct HashSink<T: Hashable> {
     public init(minimumCapacity: Int) { self.sink = Set(minimumCapacity: minimumCapacity) }
 
     /**
-     *  Add a value to the sink.
-     *
-     *  - Postcondition: `contains(value)` will return true.
-     */
-    public mutating func add(_ value: T) {
-        self.sink.insert(hashValue(of: value))
-    }
-
-    /**
      *  Does this sink already contain this value?
      */
     public func contains(_ value: T) -> Bool {
@@ -110,6 +101,15 @@ public struct HashSink<T: Hashable> {
      */
     public mutating func drain() {
         self.sink = []
+    }
+
+    /**
+     *  Insert a value into the sink.
+     *
+     *  - Postcondition: `contains(value)` will return true.
+     */
+    public mutating func insert(_ value: T) {
+        self.sink.insert(hashValue(of: value))
     }
 
 }

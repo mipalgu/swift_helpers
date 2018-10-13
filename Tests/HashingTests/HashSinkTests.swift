@@ -77,20 +77,20 @@ public class HashSinkTests: XCTestCase {
 
     public func test_hashSinkContainsSameData() {
         let point = Point2D(x: 2, y: 3)
-        self.sink.add(point)
+        self.sink.insert(point)
         XCTAssertTrue(self.sink.contains(point))
     }
 
     public func test_hashSinkDoesNotContainsDifferentData() {
         let point = Point2D(x: 2, y: 3)
         let point2 = Point2D(x: 3, y: 4)
-        self.sink.add(point)
+        self.sink.insert(point)
         XCTAssertFalse(self.sink.contains(point2))
     }
 
     public func test_hashSinkDoesNotContainsDataAfterDrain() {
         let point = Point2D(x: 2, y: 3)
-        self.sink.add(point)
+        self.sink.insert(point)
         self.sink.drain()
         XCTAssertFalse(self.sink.contains(point))
     }
