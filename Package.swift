@@ -45,5 +45,8 @@ let package = Package(
         .testTarget(
             name: "swift_helpersTests",
             dependencies: ["swift_helpers"]),
+        .testTarget(
+            name: "HashingTests",
+            dependencies: ["Hashing"]),
     ]
 )
