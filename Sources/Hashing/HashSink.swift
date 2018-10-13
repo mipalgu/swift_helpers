@@ -56,22 +56,46 @@
  *
  */
 
+/**
+ *  Keeps a record of types.
+ *
+ *  This structure allows the lookup of types using their hash values. This is
+ *  similar to Set and Dictionary, however, this structure does not store the
+ *  actual values and instead only stores the hash values. This leads to (in
+ *  most cases) a huge reduction in memory for algorithms which do not need to
+ *  keep values in memory and instead only wish to know if a particular value
+ *  has already been processed.
+ */
 public struct HashSink<T: Hashable> {
 
-    fileprivate var hashValues: Set<Int> = []
+    fileprivate var sink: Set<Int> = []
 
+    /**
+     *  Create an empty `HashSink`.
+     */
     public init() {}
 
+    /**
+     *  Add a value to the sink.
+     *
+     *  - Postcondition: `contains(value)` will return true.
+     */
     public mutating func add(_ value: T) {
-        self.hashValues.insert(hashValue(of: value))
+        self.sink.insert(hashValue(of: value))
     }
 
+    /**
+     *  Does this sink already contain this value?
+     */
     public func contains(_ value: T) -> Bool {
-        return self.hashValues.contains(hashValue(of: value))
+        return self.sink.contains(hashValue(of: value))
     }
 
+    /**
+     *  Empty the sink.
+     */
     public mutating func drain() {
-        self.hashValues = []
+        self.sink = []
     }
 
 }
