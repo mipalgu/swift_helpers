@@ -17,6 +17,10 @@ let package = Package(
         .library(
             name: "IO",
             targets: ["IO"]
+        ),
+        .library(
+            name: "Hashing",
+            targets: ["Hashing"]
         )
     ],
     dependencies: [
@@ -34,6 +38,9 @@ let package = Package(
             dependencies: []),
         .target(
             name: "IO",
+            dependencies: []),
+        .target(
+            name: "Hashing",
             dependencies: []),
         .testTarget(
             name: "swift_helpersTests",
