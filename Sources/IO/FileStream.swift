@@ -106,6 +106,10 @@ public class FileStream: InputOutputStream {
         fclose(self.file)
     }
 
+    public func flush() {
+        fflush(self.file)
+    }
+
     public func readLine() -> String? {
         var str = ""
         while true {

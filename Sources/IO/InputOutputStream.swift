@@ -56,4 +56,8 @@
  *
  */
 
-public protocol InputOutputStream: InputStream, OutputStream {}
+public protocol InputOutputStream: InputStream, OutputStream {
+
+    mutating func flush()
+
+}
