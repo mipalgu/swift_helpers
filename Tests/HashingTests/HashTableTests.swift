@@ -68,7 +68,8 @@ public class HashTableTests: XCTestCase {
             ("test_DoesntInsertSameElementTwice", test_DoesntInsertSameElementTwice),
             ("test_Sequence", test_Sequence),
             ("test_removeRemovesElement", test_removeRemovesElement),
-            ("test_removeDoesNotRemoveNonExistingElement", test_removeDoesNotRemoveNonExistingElement)
+            ("test_removeDoesNotRemoveNonExistingElement", test_removeDoesNotRemoveNonExistingElement),
+            ("test_canRetrieveElementFromHash", test_canRetrieveElementFromHash)
         ]
     }
 
@@ -137,6 +138,16 @@ public class HashTableTests: XCTestCase {
         self.table.remove(point2)
         XCTAssertEqual(self.table.count, 1)
         XCTAssertTrue(self.table.contains(point1))
+    }
+
+    public func test_canRetrieveElementFromHash() {
+        let point1 = Point2D(x: 1, y: 2)
+        self.table.insert(point1)
+        guard let outPoint = self.table[point1.hashValue] else {
+            XCTFail("Unable to retrieve elements from hash values.")
+            return
+        }
+        XCTAssertEqual(outPoint, point1)
     }
 
     fileprivate func compare(_ lhs: [Point2D], _ rhs: [Point2D]) {
