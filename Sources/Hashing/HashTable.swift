@@ -74,18 +74,6 @@ public struct HashTable<T: Hashable> {
         self.table[hashValue(of: value)] = value
     }
 
-    public subscript(hashValue: Int) -> T? {
-        return self.table[hashValue]
-    }
-
-}
-
-extension HashTable: Sequence {
-
-    public func makeIterator() -> DictionaryIterator<Int, T> {
-        return self.table.makeIterator()
-    }
-
 }
 
 extension HashTable: ExpressibleByArrayLiteral {
@@ -96,3 +84,47 @@ extension HashTable: ExpressibleByArrayLiteral {
     }
 
 }
+
+extension HashTable: Sequence {
+
+    public func makeIterator() -> AnyIterator<T> {
+        var i = self.table.startIndex
+        return AnyIterator {
+            defer { i = self.table.index(after: i) }
+            return i == self.table.endIndex ? nil : self.table[i].value
+        }
+    }
+
+}
+
+/*extension HashTable: Collection {
+
+    public var count: Int {
+        return self.table.count
+    }
+
+    public var endIndex: Dictionary<Int, T>.Index {
+        return self.table.endIndex
+    }
+
+    public var first: T? {
+        return self.table.first?.1
+    }
+
+    public var indices: Dictionary<Int, T>.Indices {
+        return self.table.indices
+    }
+
+    public var startIndex: Dictionary<Int, T>.Index {
+        return self.table.startIndex
+    }
+
+    public subscript(position: Dictionary<Int, T>.Index) -> Dictionary<Int, T>.Element {
+        return self.table[position]
+    }
+
+    public subscript(bounds: Range<Dictionary<Int, T>.Index>) -> Dictionary<Int, T>.SubSequence {
+        return self.table[bounds]
+    }
+
+}*/
