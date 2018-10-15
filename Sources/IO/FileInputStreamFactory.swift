@@ -56,7 +56,7 @@
  *
  */
 
-public final class FileInputStreamFactory {
+public final class FileInputStreamFactory: InputStreamFactory {
 
     public init() {}
 
