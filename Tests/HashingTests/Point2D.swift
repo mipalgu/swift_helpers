@@ -1,8 +1,8 @@
 /*
- * HashSinkTests.swift 
+ * Point2D.swift 
  * HashingTests 
  *
- * Created by Callum McColl on 13/10/2018.
+ * Created by Callum McColl on 15/10/2018.
  * Copyright © 2018 Callum McColl. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,43 +56,10 @@
  *
  */
 
-@testable import Hashing
-import XCTest
+struct Point2D: Hashable {
 
-public class HashSinkTests: XCTestCase {
+    var x: Int
 
-    public static var allTests: [(String, (HashSinkTests) -> () throws -> Void)] {
-        return [
-            ("test_hashSinkContainsSameData", test_hashSinkContainsSameData),
-            ("test_hashSinkDoesNotContainsDifferentData", test_hashSinkDoesNotContainsDifferentData),
-            ("test_hashSinkDoesNotContainsDataAfterDrain", test_hashSinkDoesNotContainsDataAfterDrain)
-        ]
-    }
-
-    fileprivate var sink: HashSink<Point2D> = HashSink()
-
-    public override func setUp() {
-        self.sink = HashSink()
-    }
-
-    public func test_hashSinkContainsSameData() {
-        let point = Point2D(x: 2, y: 3)
-        self.sink.insert(point)
-        XCTAssertTrue(self.sink.contains(point))
-    }
-
-    public func test_hashSinkDoesNotContainsDifferentData() {
-        let point = Point2D(x: 2, y: 3)
-        let point2 = Point2D(x: 3, y: 4)
-        self.sink.insert(point)
-        XCTAssertFalse(self.sink.contains(point2))
-    }
-
-    public func test_hashSinkDoesNotContainsDataAfterDrain() {
-        let point = Point2D(x: 2, y: 3)
-        self.sink.insert(point)
-        self.sink.drain()
-        XCTAssertFalse(self.sink.contains(point))
-    }
+    var y: Int
 
 }
