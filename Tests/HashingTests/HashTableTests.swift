@@ -66,7 +66,9 @@ public class HashTableTests: XCTestCase {
             ("test_tableInsertsElements", test_tableInsertsElements),
             ("test_tableContainsElement", test_tableContainsElement),
             ("test_DoesntInsertSameElementTwice", test_DoesntInsertSameElementTwice),
-            ("test_Sequence", test_Sequence)
+            ("test_Sequence", test_Sequence),
+            ("test_removeRemovesElement", test_removeRemovesElement),
+            ("test_removeDoesNotRemoveNonExistingElement", test_removeDoesNotRemoveNonExistingElement)
         ]
     }
 
@@ -114,6 +116,27 @@ public class HashTableTests: XCTestCase {
             arr.append(element)
         }
         compare(arr, expected)
+    }
+
+    public func test_removeRemovesElement() {
+        let point1 = Point2D(x: 1, y: 2)
+        self.table.insert(point1)
+        XCTAssertEqual(self.table.count, 1)
+        XCTAssertTrue(self.table.contains(point1))
+        self.table.remove(point1)
+        XCTAssertEqual(self.table.count, 0)
+        XCTAssertFalse(self.table.contains(point1))
+    }
+
+    public func test_removeDoesNotRemoveNonExistingElement() {
+        let point1 = Point2D(x: 1, y: 2)
+        let point2 = Point2D(x: 2, y: 3)
+        self.table.insert(point1)
+        XCTAssertEqual(self.table.count, 1)
+        XCTAssertTrue(self.table.contains(point1))
+        self.table.remove(point2)
+        XCTAssertEqual(self.table.count, 1)
+        XCTAssertTrue(self.table.contains(point1))
     }
 
     fileprivate func compare(_ lhs: [Point2D], _ rhs: [Point2D]) {

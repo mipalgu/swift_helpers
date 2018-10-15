@@ -84,6 +84,10 @@ public struct HashTable<T: Hashable> {
         self.table[Hashing.hashValue(of: value)] = value
     }
 
+    public mutating func remove(_ value: T) {
+        self.table[Hashing.hashValue(of: value)] = nil
+    }
+
     public subscript(hashValue: Int) -> T? {
         return self.table[hashValue]
     }
