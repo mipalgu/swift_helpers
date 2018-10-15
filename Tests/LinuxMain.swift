@@ -5,4 +5,5 @@ import XCTest
 XCTMain([
     testCase(StringHelpersTests.allTests)
     testCase(HashSinkTests.allTests)
+    testCase(HashTableTests.allTests)
 ])
