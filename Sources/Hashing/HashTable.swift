@@ -108,7 +108,7 @@ extension HashTable: Collection {
     }
 
     public var first: T? {
-        return self.table.first?.1
+        return self.table.first?.value
     }
 
     public var indices: Dictionary<Int, T>.Indices {
@@ -125,6 +125,30 @@ extension HashTable: Collection {
 
     public func index(after i: Dictionary<Int, T>.Index) -> Dictionary<Int, T>.Index {
         return self.table.index(after: i)
+    }
+
+}
+
+extension HashTable: CustomReflectable {
+
+    public var customMirror: Mirror {
+        return self.table.customMirror
+    }
+
+}
+
+extension HashTable: Decodable where T: Decodable {
+
+    public init(from decoder: Decoder) throws {
+        self.table = try Dictionary<Int, T>(from: decoder)
+    }
+
+}
+
+extension HashTable: Encodable where T: Encodable {
+
+    public func encode(to encoder: Encoder) throws {
+        try self.table.encode(to: encoder)
     }
 
 }
