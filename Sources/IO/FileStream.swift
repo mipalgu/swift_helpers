@@ -129,6 +129,14 @@ public class FileStream: InputOutputStream {
         return nil
     }
 
+    public func rewind() {
+ #if os(OSX)
+        Darwin.rewind(self.file)
+ #elseif os(Linux)
+        Glibc.rewind(self.file)
+ #endif
+    }
+
     /**
      *  Write to the file.
      *

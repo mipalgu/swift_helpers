@@ -60,4 +60,6 @@ public protocol InputOutputStream: InputStream, OutputStream {
 
     mutating func flush()
 
+    mutating func rewind()
+
 }
