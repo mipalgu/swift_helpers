@@ -111,14 +111,18 @@ public class FileStream: InputOutputStream {
         while true {
             let c = fgetc(self.file)
             guard c != EOF else {
-                break
+                return str.isEmpty ? nil : str
             }
             guard let scalar = UnicodeScalar(UInt32(c)) else {
                 continue
             }
-            str += String(Character(scalar))
+            let s = String(Character(scalar))
+            if s == "\n" {
+                return str
+            }
+            str += s
         }
-        return str
+        return nil
     }
 
     /**
