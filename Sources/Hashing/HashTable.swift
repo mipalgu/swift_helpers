@@ -67,11 +67,11 @@ public struct HashTable<T: Hashable> {
     }
 
     public func contains(_ value: T) -> Bool {
-        return nil != self.table[hashValue(of: value)]
+        return nil != self.table[Hashing.hashValue(of: value)]
     }
 
     public mutating func insert(_ value: T) {
-        self.table[hashValue(of: value)] = value
+        self.table[Hashing.hashValue(of: value)] = value
     }
 
 }
@@ -149,6 +149,21 @@ extension HashTable: Encodable where T: Encodable {
 
     public func encode(to encoder: Encoder) throws {
         try self.table.encode(to: encoder)
+    }
+
+}
+
+extension HashTable: Equatable {
+    
+    public static func ==(lhs: HashTable<T>, rhs: HashTable<T>) -> Bool {
+        return lhs.table == rhs.table
+    }
+}
+
+extension HashTable: Hashable {
+
+    public func hash(into hasher: inout Hasher) {
+        self.table.hash(into: &hasher)
     }
 
 }
