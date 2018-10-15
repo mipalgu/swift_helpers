@@ -66,6 +66,16 @@ public struct HashTable<T: Hashable> {
         self.table = Dictionary(minimumCapacity: minimumCapacity)
     }
 
+    public init<S: Sequence>(_ sequence: S) where S.Iterator.Element == T {
+        self.init()
+        sequence.forEach { self.insert($0) }
+    }
+
+    public init<C: Collection>(_ collection: C) where C.Iterator.Element == T {
+        self.init(minimumCapacity: collection.count)
+        collection.forEach { self.insert($0) }
+    }
+
     public func contains(_ value: T) -> Bool {
         return nil != self.table[Hashing.hashValue(of: value)]
     }
@@ -79,8 +89,7 @@ public struct HashTable<T: Hashable> {
 extension HashTable: ExpressibleByArrayLiteral {
 
     public init(arrayLiteral elements: T...) {
-        self.init(minimumCapacity: elements.count)
-        elements.forEach { self.insert($0) }
+        self.init(elements)
     }
 
 }
