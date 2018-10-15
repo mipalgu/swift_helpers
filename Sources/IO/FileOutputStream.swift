@@ -65,9 +65,7 @@
 /**
  *  A `TextOutputStream` that is capable of writing to files.
  */
-public class FileOutputStream: TextOutputStream {
-
-    private let close: Bool
+public class FileOutputStream: OutputStream {
 
     private let file: UnsafeMutablePointer<FILE>
 
@@ -77,12 +75,9 @@ public class FileOutputStream: TextOutputStream {
      *  - Parameter: A pointer to the file.  This is normally created with a
      *  call to `fopen`.
      *
-     *  - Parameter close: Should the file be closed once the class has ceased
-     *  to exist?
      */
-    public init(file: UnsafeMutablePointer<FILE>, close: Bool = false) {
+    public init(file: UnsafeMutablePointer<FILE>) {
         self.file = file
-        self.close = close
     }
 
     /**
@@ -94,18 +89,21 @@ public class FileOutputStream: TextOutputStream {
      */
     public convenience init<T: TextOutputStream>(
         path: String,
+        mode: String = "w",
         errorStream: T? = nil
     ) {
-        let fp: UnsafeMutablePointer<FILE>? = fopen(path, "w")
-        if nil != fp {
-            self.init(file: fp!, close: true)
+        if let fp = fopen(path, mode) {
+            self.init(file: fp)
             return
         }
-        if nil != errorStream {
-            var stream: T = errorStream!
+        if var stream = errorStream {
             print(strerror(errno), terminator: "\n", to: &stream)
         }
         exit(EXIT_FAILURE)
+    }
+
+    public func close() {
+        fclose(self.file)
     }
 
     /**
@@ -115,15 +113,6 @@ public class FileOutputStream: TextOutputStream {
      */
     public func write(_ string: String) {
         fputs(string, self.file)
-    }
-
-    /**
-     *  Will call `fclose` if `close` is true.
-     */
-    deinit {
-        if true == self.close {
-            fclose(self.file)
-        }
     }
 
 }
