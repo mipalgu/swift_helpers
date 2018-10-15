@@ -56,10 +56,4 @@
  *
  */
 
-public protocol InputOutputStream: InputStream, OutputStream {
-
-    mutating func flush()
-
-    mutating func rewind()
-
-}
+public protocol InputOutputStream: InputStream, OutputStream {}

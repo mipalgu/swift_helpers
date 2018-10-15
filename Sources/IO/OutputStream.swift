@@ -56,4 +56,8 @@
  *
  */
 
-public protocol OutputStream: TextOutputStream, StreamClosable {}
+public protocol OutputStream: TextOutputStream, StreamClosable {
+
+    mutating func flush()
+
+}

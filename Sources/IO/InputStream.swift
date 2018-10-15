@@ -56,4 +56,8 @@
  *
  */
 
-public protocol InputStream: TextInputStream, StreamClosable {}
+public protocol InputStream: TextInputStream, StreamClosable {
+
+    mutating func rewind()
+
+}
