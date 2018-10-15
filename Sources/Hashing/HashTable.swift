@@ -97,7 +97,7 @@ extension HashTable: Sequence {
 
 }
 
-/*extension HashTable: Collection {
+extension HashTable: Collection {
 
     public var count: Int {
         return self.table.count
@@ -119,12 +119,12 @@ extension HashTable: Sequence {
         return self.table.startIndex
     }
 
-    public subscript(position: Dictionary<Int, T>.Index) -> Dictionary<Int, T>.Element {
-        return self.table[position]
+    public subscript(position: Dictionary<Int, T>.Index) -> T {
+        return self.table[position].value
     }
 
-    public subscript(bounds: Range<Dictionary<Int, T>.Index>) -> Dictionary<Int, T>.SubSequence {
-        return self.table[bounds]
+    public func index(after i: Dictionary<Int, T>.Index) -> Dictionary<Int, T>.Index {
+        return self.table.index(after: i)
     }
 
-}*/
+}
