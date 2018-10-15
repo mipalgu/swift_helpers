@@ -1,5 +1,5 @@
 /*
- * InputStream.swift 
+ * TextInputStream.swift 
  * IO 
  *
  * Created by Callum McColl on 16/10/2018.
@@ -56,4 +56,8 @@
  *
  */
 
-public protocol InputStream: TextInputStream, StreamClosable {}
+public protocol TextInputStream {
+
+    func readLine() -> String?
+
+}
