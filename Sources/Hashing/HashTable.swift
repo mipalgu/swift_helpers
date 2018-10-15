@@ -84,6 +84,10 @@ public struct HashTable<T: Hashable> {
         self.table[Hashing.hashValue(of: value)] = value
     }
 
+    public subscript(hashValue: Int) -> T? {
+        return self.table[hashValue]
+    }
+
 }
 
 extension HashTable: ExpressibleByArrayLiteral {
