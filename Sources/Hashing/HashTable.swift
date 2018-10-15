@@ -103,8 +103,11 @@ extension HashTable: Sequence {
     public func makeIterator() -> AnyIterator<T> {
         var i = self.table.startIndex
         return AnyIterator {
+            if i == self.table.endIndex {
+                return nil
+            }
             defer { i = self.table.index(after: i) }
-            return i == self.table.endIndex ? nil : self.table[i].value
+            return self.table[i].value
         }
     }
 
