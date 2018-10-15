@@ -65,7 +65,7 @@
 /**
  *  A `TextOutputStream` that is capable of writing to files.
  */
-public class FileOutputStream: OutputStream {
+public class FileStream: InputOutputStream {
 
     private let file: UnsafeMutablePointer<FILE>
 
@@ -89,7 +89,7 @@ public class FileOutputStream: OutputStream {
      */
     public convenience init<T: TextOutputStream>(
         path: String,
-        mode: String = "w",
+        mode: String = "w+",
         errorStream: T? = nil
     ) {
         if let fp = fopen(path, mode) {
@@ -104,6 +104,21 @@ public class FileOutputStream: OutputStream {
 
     public func close() {
         fclose(self.file)
+    }
+
+    public func readLine() -> String? {
+        var str = ""
+        while true {
+            let c = fgetc(self.file)
+            guard c != EOF else {
+                break
+            }
+            guard let scalar = UnicodeScalar(UInt32(c)) else {
+                continue
+            }
+            str += String(Character(scalar))
+        }
+        return str
     }
 
     /**

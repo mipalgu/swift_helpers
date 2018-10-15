@@ -60,9 +60,9 @@ public final class FileOutputStreamFactory: OutputStreamFactory {
 
     public init() {}
 
-    public func make(id: String) -> TextOutputStream {
+    public func make(id: String) -> OutputStream {
         let errorStream: StderrOutputStream? = StderrOutputStream()
-        return FileOutputStream(path: id, errorStream: errorStream)
+        return FileStream(path: id, mode: "w", errorStream: errorStream)
     }
 
 }

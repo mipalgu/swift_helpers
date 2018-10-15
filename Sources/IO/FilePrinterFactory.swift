@@ -75,7 +75,7 @@ public class FilePrinterFactory: PrinterFactory {
         let errorStream: StderrOutputStream? = StderrOutputStream()
         return GenericPrinter(
             errorStream: errorStream!,
-            messageStream: FileOutputStream(path: id, errorStream: errorStream),
+            messageStream: FileStream(path: id, errorStream: errorStream),
             warningStream: StdoutOutputStream()
         )
     }

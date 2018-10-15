@@ -67,7 +67,7 @@
  */
 public struct StdoutOutputStream: TextOutputStream {
 
-    private var stream: FileOutputStream = FileOutputStream(file: stdout)
+    private var stream: FileStream = FileStream(file: stdout)
 
     public init() {}
 

@@ -58,6 +58,6 @@
 
 public protocol OutputStreamFactory {
 
-    func make(id: String) -> TextOutputStream
+    func make(id: String) -> OutputStream
 
 }
