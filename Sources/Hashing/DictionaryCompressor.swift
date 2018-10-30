@@ -56,8 +56,6 @@
  *
  */
 
-import Foundation
-
 public struct DictionaryCompressor: Compressor {
 
     fileprivate var ids: [String: Int]
@@ -81,8 +79,9 @@ public struct DictionaryCompressor: Compressor {
         self.ids = ids
     }
 
-    public func compress(_ dictionary: [String: Any]) -> Data {
-        var data = Data(capacity: self.ids.count * 2)
+    public func compress(_ dictionary: [String: Any]) -> ContiguousArray<UInt8> {
+        var data: ContiguousArray<UInt8> = []
+        data.reserveCapacity(self.ids.count * 2)
         func actualCompress(dictionary: [String: Any], pre: String?) {
             let keys = dictionary.keys.sorted()
             keys.forEach { key in
@@ -93,9 +92,9 @@ public struct DictionaryCompressor: Compressor {
                 guard let value = dictionary[key] else {
                     return
                 }
-                withUnsafeBytes(of: id) { data.append(Data($0)) }
+                withUnsafeBytes(of: id) { data.append(contentsOf: $0) }
                 guard let valueDictionary = value as? [String: Any] else {
-                    withUnsafeBytes(of: value) { data.append(Data($0)) }
+                    withUnsafeBytes(of: value) { data.append(contentsOf: $0) }
                     return
                 }
                 actualCompress(dictionary: valueDictionary, pre: idKey)
