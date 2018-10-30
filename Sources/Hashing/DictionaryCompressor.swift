@@ -60,14 +60,30 @@ import Foundation
 
 public struct DictionaryCompressor<Key: Hashable>: Compressor where Key: Comparable {
 
+    fileprivate var ids: [Key: Int]
+
+    public init(fromTrainingData dictionary: [Key: Any]) {
+        let keys = dictionary.keys.sorted()
+        var ids = Dictionary<Key, Int>(minimumCapacity: dictionary.count)
+        var i = 0
+        keys.forEach {
+            ids[$0] = i
+            i += 1
+        }
+        self.ids = ids
+    }
+
     public func compress(_ dictionary: [Key: Any]) -> Data {
         let keys = dictionary.keys.sorted()
         var data = Data(capacity: dictionary.count * 2)
         keys.forEach {
+            guard let id = self.ids[$0] else {
+                fatalError("Cannot compress dictionary with unknown key: \($0)")
+            }
             guard let value = dictionary[$0] else {
                 return
             }
-            withUnsafeBytes(of: $0) { data.append(Data($0)) }
+            withUnsafeBytes(of: id) { data.append(Data($0)) }
             withUnsafeBytes(of: value) { data.append(Data($0)) }
         }
         return data
