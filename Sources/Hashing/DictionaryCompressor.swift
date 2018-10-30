@@ -58,34 +58,50 @@
 
 import Foundation
 
-public struct DictionaryCompressor<Key: Hashable>: Compressor where Key: Comparable {
+public struct DictionaryCompressor: Compressor {
 
-    fileprivate var ids: [Key: Int]
+    fileprivate var ids: [String: Int]
 
-    public init(fromTrainingData dictionary: [Key: Any]) {
-        let keys = dictionary.keys.sorted()
-        var ids = Dictionary<Key, Int>(minimumCapacity: dictionary.count)
+    public init(fromTrainingData dictionary: [String: Any]) {
+        var ids = Dictionary<String, Int>(minimumCapacity: dictionary.count)
         var i = 0
-        keys.forEach {
-            ids[$0] = i
-            i += 1
+        func add(_ dictionary: [String: Any], pre: String?) {
+            let keys = dictionary.keys.sorted()
+            keys.forEach { key in 
+                let newKey = (pre.map { $0 + "." } ?? "") + key
+                ids[newKey] = i
+                i += 1
+                guard let value = dictionary[key] as? [String: Any] else {
+                    return
+                }
+                add(value, pre: newKey)
+            }
         }
+        add(dictionary, pre: nil)
         self.ids = ids
     }
 
-    public func compress(_ dictionary: [Key: Any]) -> Data {
-        let keys = dictionary.keys.sorted()
-        var data = Data(capacity: dictionary.count * 2)
-        keys.forEach {
-            guard let id = self.ids[$0] else {
-                fatalError("Cannot compress dictionary with unknown key: \($0)")
+    public func compress(_ dictionary: [String: Any]) -> Data {
+        var data = Data(capacity: self.ids.count * 2)
+        func actualCompress(dictionary: [String: Any], pre: String?) {
+            let keys = dictionary.keys.sorted()
+            keys.forEach { key in
+                let idKey = (pre.map { $0 + "." } ?? "") + key
+                guard let id = self.ids[idKey] else {
+                    fatalError("Cannot compress dictionary with unknown key: \(key)")
+                }
+                guard let value = dictionary[key] else {
+                    return
+                }
+                withUnsafeBytes(of: id) { data.append(Data($0)) }
+                guard let valueDictionary = value as? [String: Any] else {
+                    withUnsafeBytes(of: value) { data.append(Data($0)) }
+                    return
+                }
+                actualCompress(dictionary: valueDictionary, pre: idKey)
             }
-            guard let value = dictionary[$0] else {
-                return
-            }
-            withUnsafeBytes(of: id) { data.append(Data($0)) }
-            withUnsafeBytes(of: value) { data.append(Data($0)) }
         }
+        actualCompress(dictionary: dictionary, pre: nil)
         return data
     }
 
