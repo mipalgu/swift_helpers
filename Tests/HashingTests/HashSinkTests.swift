@@ -69,7 +69,7 @@ public class HashSinkTests: XCTestCase {
         ]
     }
 
-    fileprivate var sink: HashSink<Point2D> = HashSink()
+    fileprivate var sink: HashSink<Point2D, Point2D> = HashSink()
 
     public override func setUp() {
         self.sink = HashSink()

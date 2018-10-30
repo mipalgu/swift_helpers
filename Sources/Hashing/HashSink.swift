@@ -70,30 +70,44 @@
  *  do not persist this structure as there is no guarantee that the hash values
  *  will be the same between different executions.
  */
-public struct HashSink<T: Hashable> {
+public struct HashSink<RawData, CompressedData> where CompressedData: Hashable {
 
-    fileprivate var sink: Set<Int>
+    fileprivate var compressor: AnyCompressor<RawData, CompressedData>
+
+    fileprivate var sink: Set<CompressedData>
 
     /**
      *  Create an empty `HashSink`.
+     *
+     *  - Parameter compressor: The `Compressor` which will be used to minimise
+     *  the size of the data within the sink.
      */
-    public init() { self.sink = [] }
+    public init(compressor: AnyCompressor<RawData, CompressedData>) {
+        self.compressor = compressor
+        self.sink = []
+    }
 
     /**
      *  Creates an empty `HashSink` with preallocated space for at least the
      *  specified number of elements.
      *
+     *  - Parameter compressor: The compressor which will be used to minimise
+     *  the size of the data within the sink.
+     *
      *  - Parameter minimumCapacity: The minimum number of elements that the
      *  newly created `HashSink` should be able to store without reallocating
      *  memory.
      */
-    public init(minimumCapacity: Int) { self.sink = Set(minimumCapacity: minimumCapacity) }
+    public init(compressor: AnyCompressor<RawData, CompressedData>, minimumCapacity: Int) {
+        self.compressor = compressor
+        self.sink = Set(minimumCapacity: minimumCapacity)
+    }
 
     /**
      *  Does this sink already contain this value?
      */
-    public func contains(_ value: T) -> Bool {
-        return self.sink.contains(hashValue(of: value))
+    public func contains(_ value: RawData) -> Bool {
+        return self.sink.contains(self.compressor.compress(value))
     }
 
     /**
@@ -108,8 +122,31 @@ public struct HashSink<T: Hashable> {
      *
      *  - Postcondition: `contains(value)` will return true.
      */
-    public mutating func insert(_ value: T) {
-        self.sink.insert(hashValue(of: value))
+    public mutating func insert(_ value: RawData) {
+        self.sink.insert(self.compressor.compress(value))
+    }
+
+}
+
+extension HashSink where RawData == CompressedData {
+
+    /**
+     *  Create an empty `HashSink`.
+     */
+    public init() {
+        self.init(compressor: AnyCompressor(NullCompressor()))
+    }
+
+    /**
+     *  Creates an empty `HashSink` with preallocated space for at least the
+     *  specified number of elements.
+     *
+     *  - Parameter minimumCapacity: The minimum number of elements that the
+     *  newly created `HashSink` should be able to store without reallocating
+     *  memory.
+     */
+    public init(minimumCapacity: Int) {
+        self.init(compressor: AnyCompressor(NullCompressor()), minimumCapacity: minimumCapacity)
     }
 
 }
