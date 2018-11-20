@@ -105,7 +105,7 @@ public final class StringHelpers {
 #if !NO_FOUNDATION && canImport(Foundation)
         return CharacterSet.whitespacesAndNewlines.isSuperset(of: CharacterSet(charactersIn: String(char)))
 #else
-        let whitespaces: Set<Char> = ["\n", " ", "\t", "\r"]
+        let whitespaces: Set<Character> = ["\n", " ", "\t", "\r"]
         return whitespaces.contains(char)
 #endif
     }
