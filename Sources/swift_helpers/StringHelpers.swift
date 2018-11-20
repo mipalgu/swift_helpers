@@ -56,12 +56,15 @@
  *
  */
 
+#if canImport(Foundation)
 import Foundation
+#endif
 
 public final class StringHelpers {
 
     public init() {}
 
+#if canImport(Foundation)
     public func indent(_ str: String, _ level: Int = 1) -> String {
         let indent = String([Character](repeating: " ", count: 4 * level))
         let lines = str.components(separatedBy: CharacterSet.newlines)
@@ -72,6 +75,7 @@ public final class StringHelpers {
             return indent + $0
         }.combine("") { $0 + "\n" + $1 }
     }
+#endif
 
     public func isAlphaNumeric(_ char: Character) -> Bool {
         return isNumeric(char) || isLetter(char)
