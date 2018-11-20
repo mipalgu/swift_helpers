@@ -101,13 +101,14 @@ public final class StringHelpers {
         return char >= "A" && char <= "Z"
     }
 
-#if !NO_FOUNDATION
-#if canImport(Foundation)
     public func isWhitespace(_ char: Character) -> Bool {
+#if !NO_FOUNDATION && canImport(Foundation)
         return CharacterSet.whitespacesAndNewlines.isSuperset(of: CharacterSet(charactersIn: String(char)))
+#else
+        let whitespaces: Set<Char> = ["\n", " ", "\t", "\r"]
+        return whitespaces.contains(char)
+#endif
     }
-#endif
-#endif
 
     public func toCamelCase(_ str: String) -> String {
         if true == str.isEmpty {
