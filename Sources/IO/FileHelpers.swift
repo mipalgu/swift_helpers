@@ -55,6 +55,7 @@
  * Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#if !NO_FOUNDATION
 #if canImport(Foundation)
 import Foundation
 
@@ -171,4 +172,5 @@ public final class FileHelpers {
     }
 
 }
+#endif
 #endif
