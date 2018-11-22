@@ -126,7 +126,6 @@ public class FileStream: InputOutputStream {
             }
             str += s
         }
-        return nil
     }
 
     public func rewind() {

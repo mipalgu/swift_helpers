@@ -148,7 +148,7 @@ public final class FileHelpers {
                 $0.absoluteURL == subfile.absoluteURL
             } && (true == subfile.isFileURL || nil == subfiles.first { self.path($0, isWithin: subfile) })
         }
-        deleteFiles.forEach { self.deleteItem(atPath: $0) }
+        deleteFiles.forEach { _ = self.deleteItem(atPath: $0) }
         return dir
     }
 

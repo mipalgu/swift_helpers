@@ -39,7 +39,7 @@
  *  the result.
  */
 public func -<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
-    return a.flatMap(f)
+    return a.compactMap(f)
 
 }
 
@@ -55,7 +55,7 @@ public func -<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
  *  the result.
  */
 public func >>- <T, U>(a: [T], f: (T) -> U?) -> [U] {
-    return a.flatMap(f)
+    return a.compactMap(f)
 }
 
 /**

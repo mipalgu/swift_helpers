@@ -60,7 +60,7 @@ extension Sequence where Self.SubSequence: Sequence, Self.SubSequence.Iterator.E
 
     public func trim(
         _ shouldTrim: (Self.Iterator.Element) throws -> Bool
-    ) rethrows -> RandomAccessSlice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
+    ) rethrows -> Slice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
         let droppedReversed = try self.reversed().drop(while: shouldTrim)
         return try droppedReversed.reversed().drop(while: shouldTrim)
     }
@@ -75,7 +75,7 @@ extension Sequence where
 
     public func trim(
         _ element: Self.Iterator.Element
-    ) -> RandomAccessSlice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
+    ) -> Slice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
         return self.trim { $0 == element }
     }
 
