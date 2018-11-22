@@ -56,14 +56,17 @@
  *
  */
 
+#if !NO_FOUNDATION
 #if canImport(Foundation)
 import Foundation
+#endif
 #endif
 
 public final class StringHelpers {
 
     public init() {}
 
+#if !NO_FOUNDATION
 #if canImport(Foundation)
     public func indent(_ str: String, _ level: Int = 1) -> String {
         let indent = String([Character](repeating: " ", count: 4 * level))
@@ -75,6 +78,7 @@ public final class StringHelpers {
             return indent + $0
         }.combine("") { $0 + "\n" + $1 }
     }
+#endif
 #endif
 
     public func isAlphaNumeric(_ char: Character) -> Bool {
@@ -98,7 +102,12 @@ public final class StringHelpers {
     }
 
     public func isWhitespace(_ char: Character) -> Bool {
+#if !NO_FOUNDATION && canImport(Foundation)
         return CharacterSet.whitespacesAndNewlines.isSuperset(of: CharacterSet(charactersIn: String(char)))
+#else
+        let whitespaces: Set<Character> = ["\n", " ", "\t", "\r"]
+        return whitespaces.contains(char)
+#endif
     }
 
     public func toCamelCase(_ str: String) -> String {
