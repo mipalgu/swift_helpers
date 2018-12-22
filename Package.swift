@@ -21,6 +21,10 @@ let package = Package(
         .library(
             name: "Hashing",
             targets: ["Hashing"]
+        ),
+        .library(
+            name: "Trees",
+            targets: ["Trees"]
         )
     ],
     dependencies: [
