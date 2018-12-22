@@ -42,11 +42,17 @@ let package = Package(
         .target(
             name: "Hashing",
             dependencies: []),
+        .target(
+            name: "Trees",
+            dependencies: []),
         .testTarget(
             name: "swift_helpersTests",
             dependencies: ["swift_helpers"]),
         .testTarget(
             name: "HashingTests",
             dependencies: ["Hashing"]),
+        .testTarget(
+            name: "TreesTests",
+            dependencies: ["Trees"])
     ]
 )
