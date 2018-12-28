@@ -103,3 +103,18 @@ extension Sequence where
     }
 
 }
+
+extension Sequence {
+
+    public func failMap<T>(_ transform: (Self.Iterator.Element) throws -> T?) rethrows -> [T]? {
+        var arr: [T] = []
+        for e in self {
+            guard let r = try transform(e) else {
+                return nil
+            }
+            arr.append(r)
+        }
+        return arr
+    }
+
+}
