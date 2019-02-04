@@ -118,3 +118,39 @@ extension Sequence {
     }
 
 }
+
+extension RandomAccessCollection where Self.Iterator.Element: Comparable {
+    
+    func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
+        if self.isEmpty {
+            return self[self.endIndex ..< self.startIndex]
+        }
+        var lower = 0
+        var upper = self.count - 1
+        var startIndex = self.endIndex
+        var endIndex = self.startIndex
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            if self[currentIndex] == element {
+                if let foundIndex = self[self.startIndex ..< currentIndex].reversed().firstIndex(where: { $0 != element }) {
+                    startIndex = foundIndex.base
+                }
+                if let foundIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex(where: { $0 != element }) {
+                    endIndex = foundIndex
+                }
+                break
+            }
+            if self[currentIndex] > element {
+                upper = offset - 1
+                continue
+            }
+            lower = offset + 1
+        }
+        if startIndex > endIndex {
+            return self[self.endIndex ..< self.endIndex]
+        }
+        return self[startIndex ..< endIndex]
+    }
+    
+}
