@@ -3,7 +3,8 @@ import XCTest
 @testable import HashingTests
 
 XCTMain([
-    testCase(StringHelpersTests.allTests)
-    testCase(HashSinkTests.allTests)
+    testCase(SequenceTests.allTests),
+    testCase(StringHelpersTests.allTests),
+    testCase(HashSinkTests.allTests),
     testCase(HashTableTests.allTests)
 ])

@@ -63,7 +63,9 @@ public class SequenceTests: XCTestCase {
     
     public static var allTests: [(String, (SequenceTests) -> () throws -> Void)] {
         return [
-            ("test_binarySearchReturnsAllElements", test_binarySearchReturnsAllElements),
+            ("test_binarySearchReturnsNoElementsWhenNoneAreFound", test_binarySearchReturnsNoElementsWhenNoneAreFound),
+            ("test_binarySearchReturnsElementInTheMiddle", test_binarySearchReturnsElementInTheMiddle),
+            ("test_binarySearchReturnsSingleElements", test_binarySearchReturnsSingleElements),
             ("test_binarySearchReturnsAllElementsAtTheFront", test_binarySearchReturnsAllElementsAtTheFront),
             ("test_binarySearchReturnsAllElementsAtTheEnd", test_binarySearchReturnsAllElementsAtTheEnd),
             ("test_binarySearchReturnsTheEntireCollection", test_binarySearchReturnsTheEntireCollection),
@@ -84,10 +86,24 @@ public class SequenceTests: XCTestCase {
         return ones + twos + threes + fours + fives
     }
     
-    public func test_binarySearchReturnsAllElements() {
+    public func test_binarySearchReturnsNoElementsWhenNoneAreFound() {
+        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results = arr.binarySearch(0)
+        XCTAssertEqual([], results)
+    }
+    
+    public func test_binarySearchReturnsElementInTheMiddle() {
         let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results = arr.binarySearch(3)
         XCTAssertEqual([3, 3], results)
+    }
+    
+    public func test_binarySearchReturnsSingleElements() {
+        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results2 = arr.binarySearch(2)
+        XCTAssertEqual([2], results2)
+        let results4 = arr.binarySearch(4)
+        XCTAssertEqual([4], results4)
     }
     
     public func test_binarySearchReturnsAllElementsAtTheFront() {
