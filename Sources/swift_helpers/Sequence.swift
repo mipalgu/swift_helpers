@@ -125,7 +125,7 @@ extension Sequence {
 
 }
 
-extension BidirectionalCollection {
+extension RandomAccessCollection {
     
     public func binaryRangeSearch(_ compare: (Self.Iterator.Element) throws -> ComparisonResult) rethrows -> Range<Self.Index> {
         var lower = 0
@@ -153,7 +153,7 @@ extension BidirectionalCollection {
     
 }
 
-extension BidirectionalCollection where Self.Iterator.Element: Comparable {
+extension RandomAccessCollection where Self.Iterator.Element: Comparable {
     
     public func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
         return self.binaryRangeSearch {
