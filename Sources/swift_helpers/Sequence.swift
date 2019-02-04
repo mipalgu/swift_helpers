@@ -123,7 +123,7 @@ extension RandomAccessCollection where Self.Iterator.Element: Comparable {
     
     func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
         if self.isEmpty {
-            return self[self.endIndex ..< self.startIndex]
+            return self[self.endIndex ..< self.endIndex]
         }
         var lower = 0
         var upper = self.count - 1
@@ -135,9 +135,14 @@ extension RandomAccessCollection where Self.Iterator.Element: Comparable {
             if self[currentIndex] == element {
                 if let foundIndex = self[self.startIndex ..< currentIndex].reversed().firstIndex(where: { $0 != element }) {
                     startIndex = foundIndex.base
+                } else {
+                    startIndex = self.startIndex
                 }
-                if let foundIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex(where: { $0 != element }) {
+                let sub = self[self.index(after: currentIndex) ..< self.endIndex]
+                if let foundIndex = sub.firstIndex(where: { $0 != element }) {
                     endIndex = foundIndex
+                } else {
+                    endIndex = self.endIndex
                 }
                 break
             }
