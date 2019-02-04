@@ -5,6 +5,8 @@ ALL_TARGETS=test
 
 SWIFTCFLAGS=-warnings-as-errors
 
+all:	all-real
+
 generate-xcodeproj:
 	$Ecp config.sh.in config.sh
 	$Eecho "CCFLAGS=\"${CFLAGS:C,(.*),-Xcc \1,g}\"" >> config.sh
