@@ -121,9 +121,9 @@ extension Sequence {
 
 extension BidirectionalCollection where Self.Iterator.Element: Comparable {
     
-    func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
+    func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
         if self.isEmpty {
-            return self[self.endIndex ..< self.endIndex]
+            return self.endIndex ..< self.endIndex
         }
         var lower = 0
         var upper = self.count - 1
@@ -152,9 +152,13 @@ extension BidirectionalCollection where Self.Iterator.Element: Comparable {
             lower = offset + 1
         }
         if startIndex > endIndex {
-            return self[self.endIndex ..< self.endIndex]
+            return self.endIndex ..< self.endIndex
         }
-        return self[startIndex ..< endIndex]
+        return startIndex ..< endIndex
+    }
+    
+    func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
+        return self[self.binaryRangeSearch(element)]
     }
     
 }
