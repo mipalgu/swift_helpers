@@ -67,8 +67,21 @@ public class SequenceTests: XCTestCase {
             ("test_binarySearchReturnsAllElementsAtTheFront", test_binarySearchReturnsAllElementsAtTheFront),
             ("test_binarySearchReturnsAllElementsAtTheEnd", test_binarySearchReturnsAllElementsAtTheEnd),
             ("test_binarySearchReturnsTheEntireCollection", test_binarySearchReturnsTheEntireCollection),
-            ("test_binarySearchReturnsEmptyCollection", test_binarySearchReturnsEmptyCollection)
+            ("test_binarySearchReturnsEmptyCollection", test_binarySearchReturnsEmptyCollection),
+            ("test_performance", test_performance),
+            ("test_filterPerformance", test_filterPerformance),
+            ("test_performanceMissing", test_performanceMissing),
+            ("test_filterPerformanceMissing", test_filterPerformanceMissing)
         ]
+    }
+    
+    fileprivate func createArray(count: Int) -> [Int] {
+        let ones = Array(repeating: 1, count: count)
+        let twos = Array(repeating: 2, count: count)
+        let threes = Array(repeating: 3, count: count)
+        let fours = Array(repeating: 4, count: count)
+        let fives = Array(repeating: 5, count: count)
+        return ones + twos + threes + fours + fives
     }
     
     public func test_binarySearchReturnsAllElements() {
@@ -99,6 +112,42 @@ public class SequenceTests: XCTestCase {
         let arr: [Int] = []
         let results = arr.binarySearch(0)
         XCTAssertEqual([], results)
+    }
+    
+    public func test_performance() {
+        let arr = self.createArray(count: 100000)
+        measure {
+            _ = arr.binarySearch(1)
+            _ = arr.binarySearch(2)
+            _ = arr.binarySearch(3)
+            _ = arr.binarySearch(4)
+            _ = arr.binarySearch(5)
+        }
+    }
+    
+    public func test_filterPerformance() {
+        let arr = self.createArray(count: 100000)
+        measure {
+            _ = arr.filter { $0 == 1 }
+            _ = arr.filter { $0 == 2 }
+            _ = arr.filter { $0 == 3 }
+            _ = arr.filter { $0 == 4 }
+            _ = arr.filter { $0 == 5 }
+        }
+    }
+    
+    public func test_performanceMissing() {
+        let arr = self.createArray(count: 1000000)
+        measure {
+            _ = arr.binarySearch(0)
+        }
+    }
+    
+    public func test_filterPerformanceMissing() {
+        let arr = self.createArray(count: 1000000)
+        measure {
+            _ = arr.filter { $0 == 0 }
+        }
     }
     
 }
