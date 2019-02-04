@@ -119,7 +119,7 @@ extension Sequence {
 
 }
 
-extension RandomAccessCollection where Self.Iterator.Element: Comparable {
+extension BidirectionalCollection where Self.Iterator.Element: Comparable {
     
     func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
         if self.isEmpty {
@@ -138,8 +138,7 @@ extension RandomAccessCollection where Self.Iterator.Element: Comparable {
                 } else {
                     startIndex = self.startIndex
                 }
-                let sub = self[self.index(after: currentIndex) ..< self.endIndex]
-                if let foundIndex = sub.firstIndex(where: { $0 != element }) {
+                if let foundIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex(where: { $0 != element }) {
                     endIndex = foundIndex
                 } else {
                     endIndex = self.endIndex
