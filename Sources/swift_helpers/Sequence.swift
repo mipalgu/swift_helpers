@@ -128,21 +128,13 @@ extension BidirectionalCollection where Self.Iterator.Element: Comparable {
         var lower = 0
         var upper = self.count - 1
         var startIndex = self.endIndex
-        var endIndex = self.startIndex
+        var endIndex = self.endIndex
         while lower <= upper {
             let offset = (lower + upper) / 2
             let currentIndex = self.index(self.startIndex, offsetBy: offset)
             if self[currentIndex] == element {
-                if let foundIndex = self[self.startIndex ..< currentIndex].reversed().firstIndex(where: { $0 != element }) {
-                    startIndex = foundIndex.base
-                } else {
-                    startIndex = self.startIndex
-                }
-                if let foundIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex(where: { $0 != element }) {
-                    endIndex = foundIndex
-                } else {
-                    endIndex = self.endIndex
-                }
+                startIndex = self[self.startIndex ..< currentIndex].reversed().firstIndex { $0 != element }?.base ?? self.startIndex
+                endIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex { $0 != element } ?? self.endIndex
                 break
             }
             if self[currentIndex] > element {
@@ -150,9 +142,6 @@ extension BidirectionalCollection where Self.Iterator.Element: Comparable {
                 continue
             }
             lower = offset + 1
-        }
-        if startIndex > endIndex {
-            return self.endIndex ..< self.endIndex
         }
         return startIndex ..< endIndex
     }
