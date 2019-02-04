@@ -56,6 +56,12 @@
  *
  */
 
+#if !NO_FOUNDATION
+#if canImport(Foundation)
+import Foundation
+#endif
+#endif
+
 extension Sequence where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
 
     public func trim(
@@ -119,31 +125,42 @@ extension Sequence {
 
 }
 
-extension BidirectionalCollection where Self.Iterator.Element: Comparable {
+extension BidirectionalCollection {
     
-    public func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
-        if self.isEmpty {
-            return self.endIndex ..< self.endIndex
-        }
+    public func binaryRangeSearch(_ compare: (Self.Iterator.Element) throws -> ComparisonResult) rethrows -> Range<Self.Index> {
         var lower = 0
         var upper = self.count - 1
-        var startIndex = self.endIndex
-        var endIndex = self.endIndex
         while lower <= upper {
             let offset = (lower + upper) / 2
             let currentIndex = self.index(self.startIndex, offsetBy: offset)
-            if self[currentIndex] == element {
-                startIndex = self[self.startIndex ..< currentIndex].reversed().firstIndex { $0 != element }?.base ?? self.startIndex
-                endIndex = self[self.index(after: currentIndex) ..< self.endIndex].firstIndex { $0 != element } ?? self.endIndex
-                break
-            }
-            if self[currentIndex] > element {
+            switch try compare(self[currentIndex]) {
+            case .orderedSame:
+                let startIndex = try self[self.startIndex ..< currentIndex].reversed().firstIndex { try compare($0).rawValue != 0 }?.base ?? self.startIndex
+                let endIndex = try self[self.index(after: currentIndex) ..< self.endIndex].firstIndex { try compare($0).rawValue != 0 } ?? self.endIndex
+                return startIndex ..< endIndex
+            case .orderedDescending:
                 upper = offset - 1
-                continue
+            case .orderedAscending:
+                lower = offset + 1
             }
-            lower = offset + 1
         }
-        return startIndex ..< endIndex
+        return self.endIndex ..< self.endIndex
+    }
+    
+    public func binarySearch(_ compare: (Self.Iterator.Element) throws -> ComparisonResult) rethrows -> Self.SubSequence {
+        return self[try self.binaryRangeSearch(compare)]
+    }
+    
+}
+
+extension BidirectionalCollection where Self.Iterator.Element: Comparable {
+    
+    public func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
+        return self.binaryRangeSearch {
+            if $0 == element { return .orderedSame }
+            if $0 > element { return .orderedDescending }
+            return .orderedAscending
+        }
     }
     
     public func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
