@@ -121,7 +121,7 @@ extension Sequence {
 
 extension BidirectionalCollection where Self.Iterator.Element: Comparable {
     
-    func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
+    public func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
         if self.isEmpty {
             return self.endIndex ..< self.endIndex
         }
@@ -146,7 +146,7 @@ extension BidirectionalCollection where Self.Iterator.Element: Comparable {
         return startIndex ..< endIndex
     }
     
-    func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
+    public func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
         return self[self.binaryRangeSearch(element)]
     }
     
