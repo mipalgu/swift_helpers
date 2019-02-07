@@ -70,6 +70,8 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func insertIndex(for: Element) -> Index
     
+    func find(_: Element) -> Slice<Self>
+    
     mutating func insert(_: Element)
     
 }

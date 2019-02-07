@@ -193,6 +193,10 @@ extension SortedCollectionSlice: SortedOperations {
         return self.index(self.startIndex, offsetBy: lower)
     }
     
+    public func find(_ element: Element) -> Slice<SortedCollectionSlice<Element>> {
+        return Slice(base: self, bounds: self.range(of: element))
+    }
+    
     public mutating func insert(_ element: Element) {
         let index = self.insertIndex(for: element)
         if index == self.endIndex {
