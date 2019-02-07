@@ -125,46 +125,18 @@ extension Sequence {
 
 }
 
-extension RandomAccessCollection {
+extension Sequence {
     
-    public func binaryRangeSearch(_ compare: (Self.Iterator.Element) throws -> ComparisonResult) rethrows -> Range<Self.Index> {
-        var lower = 0
-        var upper = self.count - 1
-        while lower <= upper {
-            let offset = (lower + upper) / 2
-            let currentIndex = self.index(self.startIndex, offsetBy: offset)
-            switch try compare(self[currentIndex]) {
-            case .orderedSame:
-                let startIndex = try self[self.startIndex ..< currentIndex].reversed().firstIndex { try compare($0).rawValue != 0 }?.base ?? self.startIndex
-                let endIndex = try self[self.index(after: currentIndex) ..< self.endIndex].firstIndex { try compare($0).rawValue != 0 } ?? self.endIndex
-                return startIndex ..< endIndex
-            case .orderedDescending:
-                upper = offset - 1
-            case .orderedAscending:
-                lower = offset + 1
-            }
-        }
-        return self.endIndex ..< self.endIndex
-    }
-    
-    public func binarySearch(_ compare: (Self.Iterator.Element) throws -> ComparisonResult) rethrows -> Self.SubSequence {
-        return self[try self.binaryRangeSearch(compare)]
+    public func sortedCollection(_ compare: @escaping (Self.Iterator.Element, Self.Iterator.Element) -> ComparisonResult) -> SortedCollection<Self.Iterator.Element> {
+        return SortedCollection(unsortedSequence: self, comparator: AnyComparator(compare))
     }
     
 }
 
-extension RandomAccessCollection where Self.Iterator.Element: Comparable {
+extension Sequence where Self.Iterator.Element: Comparable {
     
-    public func binaryRangeSearch(_ element: Self.Iterator.Element) -> Range<Self.Index> {
-        return self.binaryRangeSearch {
-            if $0 == element { return .orderedSame }
-            if $0 > element { return .orderedDescending }
-            return .orderedAscending
-        }
-    }
-    
-    public func binarySearch(_ element: Self.Iterator.Element) -> Self.SubSequence {
-        return self[self.binaryRangeSearch(element)]
+    public func sortedCollection() -> SortedCollection<Self.Iterator.Element> {
+        return SortedCollection(unsortedSequence: self)
     }
     
 }
