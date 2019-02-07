@@ -113,6 +113,16 @@ extension SortedCollection where Element: Comparable {
     
 }
 
+extension SortedCollection: ExpressibleByArrayLiteral where Element: Comparable {
+    
+    public typealias ArrayLiteralElement = Element
+    
+    public init(arrayLiteral elements: Element...) {
+        self.init(unsortedSequence: elements)
+    }
+    
+}
+
 extension SortedCollection: Sequence {
     
     public func makeIterator() -> Array<Element>.Iterator {
