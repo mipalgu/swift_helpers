@@ -83,7 +83,7 @@ public class SequenceTests: XCTestCase {
         let threes = Array(repeating: 3, count: count)
         let fours = Array(repeating: 4, count: count)
         let fives = Array(repeating: 5, count: count)
-        return SortedCollection(unsortedSequence: ones + twos + threes + fours + fives)
+        return SortedCollection(sortedArray: ones + twos + threes + fours + fives)
     }
     
     public func test_binarySearchReturnsNoElementsWhenNoneAreFound() {
