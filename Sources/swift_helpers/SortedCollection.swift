@@ -113,6 +113,14 @@ extension SortedCollection where Element: Comparable {
     
 }
 
+extension SortedCollection: Sequence {
+    
+    public func makeIterator() -> Array<Element>.Iterator {
+        return self.data.makeIterator()
+    }
+    
+}
+
 extension SortedCollection: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
