@@ -77,67 +77,67 @@ public class SequenceTests: XCTestCase {
         ]
     }
     
-    fileprivate func createArray(count: Int) -> [Int] {
+    fileprivate func createArray(count: Int) -> SortedCollection<Int> {
         let ones = Array(repeating: 1, count: count)
         let twos = Array(repeating: 2, count: count)
         let threes = Array(repeating: 3, count: count)
         let fours = Array(repeating: 4, count: count)
         let fives = Array(repeating: 5, count: count)
-        return ones + twos + threes + fours + fives
+        return SortedCollection(unsortedSequence: ones + twos + threes + fours + fives)
     }
     
     public func test_binarySearchReturnsNoElementsWhenNoneAreFound() {
-        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
-        let results = arr.binarySearch(0)
-        XCTAssertEqual([], results)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results = arr.find(0)
+        XCTAssertEqual([], Array(results))
     }
     
     public func test_binarySearchReturnsElementInTheMiddle() {
-        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
-        let results = arr.binarySearch(3)
-        XCTAssertEqual([3, 3], results)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results = arr.find(3)
+        XCTAssertEqual([3, 3], Array(results))
     }
     
     public func test_binarySearchReturnsSingleElements() {
-        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
-        let results2 = arr.binarySearch(2)
-        XCTAssertEqual([2], results2)
-        let results4 = arr.binarySearch(4)
-        XCTAssertEqual([4], results4)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results2 = arr.find(2)
+        XCTAssertEqual([2], Array(results2))
+        let results4 = arr.find(4)
+        XCTAssertEqual([4], Array(results4))
     }
     
     public func test_binarySearchReturnsAllElementsAtTheFront() {
-        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
-        let results = arr.binarySearch(1)
-        XCTAssertEqual([1, 1, 1, 1], results)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results = arr.find(1)
+        XCTAssertEqual([1, 1, 1, 1], Array(results))
     }
     
     public func test_binarySearchReturnsAllElementsAtTheEnd() {
-        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
-        let results = arr.binarySearch(5)
-        XCTAssertEqual([5, 5, 5, 5, 5], results)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let results = arr.find(5)
+        XCTAssertEqual([5, 5, 5, 5, 5], Array(results))
     }
     
     public func test_binarySearchReturnsTheEntireCollection() {
-        let arr = [1, 1, 1, 1]
-        let results = arr.binarySearch(1)
-        XCTAssertEqual([1, 1, 1, 1], results)
+        let arr: SortedCollection<Int> = [1, 1, 1, 1]
+        let results = arr.find(1)
+        XCTAssertEqual([1, 1, 1, 1], Array(results))
     }
     
     public func test_binarySearchReturnsEmptyCollection() {
-        let arr: [Int] = []
-        let results = arr.binarySearch(0)
-        XCTAssertEqual([], results)
+        let arr: SortedCollection<Int> = []
+        let results = arr.find(0)
+        XCTAssertEqual([], Array(results))
     }
     
     public func test_performance() {
         let arr = self.createArray(count: 100000)
         measure {
-            _ = arr.binarySearch(1)
-            _ = arr.binarySearch(2)
-            _ = arr.binarySearch(3)
-            _ = arr.binarySearch(4)
-            _ = arr.binarySearch(5)
+            _ = arr.find(1)
+            _ = arr.find(2)
+            _ = arr.find(3)
+            _ = arr.find(4)
+            _ = arr.find(5)
         }
     }
     
@@ -155,7 +155,7 @@ public class SequenceTests: XCTestCase {
     public func test_performanceMissing() {
         let arr = self.createArray(count: 1000000)
         measure {
-            _ = arr.binarySearch(0)
+            _ = arr.find(0)
         }
     }
     
