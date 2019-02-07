@@ -169,6 +169,58 @@ extension SortedCollection: RandomAccessCollection {
     
 }
 
+extension SortedCollection: SortedOperations {
+    
+    public func anyLocation(of element: Element) -> Array<Element>.Index {
+        var lower = 0
+        var upper = self.count - 1
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
+            case .orderedSame:
+                return currentIndex
+            case .orderedDescending:
+                upper = offset - 1
+            case .orderedAscending:
+                lower = offset + 1
+            }
+        }
+        return self.endIndex
+    }
+    
+    public func contains(_ element: Element) -> Bool {
+        return self.anyLocation(of: element) != self.endIndex
+    }
+    
+    public func range(of element: Element) -> Range<Array<Element>.Index> {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return self.endIndex ..< self.endIndex
+        }
+        let startIndex = self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+        let endIndex = self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+        return startIndex ..< endIndex
+    }
+    
+    public func firstLocation(of element: Element) -> Array<Element>.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+    }
+    
+    public func lastLocation(of element: Element) -> Array<Element>.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+    }
+    
+}
+
 extension SortedCollection: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {

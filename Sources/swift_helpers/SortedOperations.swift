@@ -64,8 +64,8 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func range(of: Element) -> Range<Index>
     
-    func firstLocation(of: Element) -> Index
+    func firstLocation(of: Element) -> Index?
     
-    func lastLocation(of: Element) -> Index
+    func lastLocation(of: Element) -> Index?
     
 }
