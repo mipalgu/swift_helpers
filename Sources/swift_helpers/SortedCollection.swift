@@ -64,6 +64,51 @@ import Foundation
 
 public struct SortedCollection<Element> {
     
-    var
+    fileprivate let comparator: AnyComparator<Element>
+    fileprivate var data: [Element]
+    
+    public init(comparator: AnyComparator<Element>) {
+        self.init(unsortedSequence: [], comparator: comparator)
+    }
+    
+    public init<S: Sequence>(unsortedSequence: S, comparator: AnyComparator<Element>) where S.Element == Element {
+        self.data = unsortedSequence.sorted {
+            switch comparator.compare(lhs: $0, rhs: $1) {
+            case .orderedAscending:
+                return true
+            default:
+                return false
+            }
+        }
+        self.comparator = comparator
+    }
+    
+}
+
+extension SortedCollection where Element: Comparable {
+    
+    public init<S: Sequence>(unsortedSequence: S) where S.Element == Element, S.Element: Comparable {
+        self.init(
+            unsortedSequence: unsortedSequence,
+            comparator: AnyComparator {
+                if $0 < $1 {
+                    return .orderedAscending
+                }
+                if $0 > $1 {
+                    return .orderedDescending
+                }
+                return .orderedSame
+            }
+        )
+    }
+    
+    public init() {
+        self.init(unsortedSequence: [])
+    }
+    
+    public init(minimumCapacity: Int) {
+        self.init()
+        self.data.reserveCapacity(minimumCapacity)
+    }
     
 }
