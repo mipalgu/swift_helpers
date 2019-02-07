@@ -173,8 +173,8 @@ extension SortedCollection: BidirectionalCollection {
 
 extension SortedCollection: RandomAccessCollection {
     
-    public subscript(bounds: Range<Array<Element>.Index>) -> Array<Element>.SubSequence {
-        return self.data[bounds]
+    public subscript(bounds: Range<Array<Element>.Index>) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
     
 }
