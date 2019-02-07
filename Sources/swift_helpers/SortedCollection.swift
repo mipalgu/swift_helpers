@@ -161,6 +161,14 @@ extension SortedCollection: BidirectionalCollection {
     
 }
 
+extension SortedCollection: RandomAccessCollection {
+    
+    public subscript(bounds: Range<Array<Element>.Index>) -> Array<Element>.SubSequence {
+        return self.data[bounds]
+    }
+    
+}
+
 extension SortedCollection: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
