@@ -153,6 +153,14 @@ extension SortedCollection: Collection {
     
 }
 
+extension SortedCollection: BidirectionalCollection {
+    
+    public func index(before i: Array<Element>.Index) -> Array<Element>.Index {
+        return self.data.index(before: i)
+    }
+    
+}
+
 extension SortedCollection: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
