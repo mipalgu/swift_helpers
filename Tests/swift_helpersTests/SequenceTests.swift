@@ -70,6 +70,7 @@ public class SequenceTests: XCTestCase {
             ("test_binarySearchReturnsAllElementsAtTheEnd", test_binarySearchReturnsAllElementsAtTheEnd),
             ("test_binarySearchReturnsTheEntireCollection", test_binarySearchReturnsTheEntireCollection),
             ("test_binarySearchReturnsEmptyCollection", test_binarySearchReturnsEmptyCollection),
+            ("test_insertingIntoSortedCollection", test_insertingIntoSortedCollection),
             ("test_performance", test_performance),
             ("test_filterPerformance", test_filterPerformance),
             ("test_performanceMissing", test_performanceMissing),
@@ -128,6 +129,21 @@ public class SequenceTests: XCTestCase {
         let arr: SortedCollection<Int> = []
         let results = arr.find(0)
         XCTAssertEqual([], Array(results))
+    }
+    
+    public func test_insertingIntoSortedCollection() {
+        var collection: SortedCollection<Int> = []
+        XCTAssertEqual([], collection.data)
+        collection.insert(1)
+        XCTAssertEqual([1], collection.data)
+        collection.insert(2)
+        XCTAssertEqual([1, 2], collection.data)
+        collection.insert(2)
+        XCTAssertEqual([1, 2, 2], collection.data)
+        collection.insert(0)
+        XCTAssertEqual([0, 1, 2, 2], collection.data)
+        collection.insert(-1)
+        XCTAssertEqual([-1, 0, 1, 2, 2], collection.data)
     }
     
     public func test_performance() {
