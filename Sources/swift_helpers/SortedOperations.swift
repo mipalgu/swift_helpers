@@ -174,7 +174,7 @@ extension SortedOperationsDefaults where
     }
     
     public func lessThan(_ element: Element) -> Self.SubSequence {
-        return Self.SubSequence.init(data: self.data[self.startIndex ..< (self.firstLocation(of: element).map { self.index(before: $0) } ?? self.startIndex)], comparator: self.comparator)
+        return Self.SubSequence.init(data: self.data[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)], comparator: self.comparator)
     }
     
     public func greaterThan(_ element: Element) -> Self.SubSequence {
