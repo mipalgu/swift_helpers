@@ -72,6 +72,10 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func find(_: Element) -> Self.SubSequence
     
+    func lessThan(_: Element) -> Self.SubSequence
+    
+    func greaterThan(_: Element) -> Self.SubSequence
+    
     mutating func insert(_: Element)
     
 }
@@ -167,6 +171,14 @@ extension SortedOperationsDefaults where
     
     public func find(_ element: Element) -> Self.SubSequence {
         return Self.SubSequence.init(data: self.data[self.range(of: element)], comparator: self.comparator)
+    }
+    
+    public func lessThan(_ element: Element) -> Self.SubSequence {
+        return Self.SubSequence.init(data: self.data[self.startIndex ..< (self.firstLocation(of: element).map { self.index(before: $0) } ?? self.startIndex)], comparator: self.comparator)
+    }
+    
+    public func greaterThan(_ element: Element) -> Self.SubSequence {
+        return Self.SubSequence.init(data: self.data[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex], comparator: self.comparator)
     }
     
     public mutating func insert(_ element: Element) {
