@@ -67,7 +67,7 @@ public struct SortedCollectionSlice<Element>: UnderlyingDataContainer, Comparato
     public let comparator: AnyComparator<Element>
     public var data: Array<Element>.SubSequence
     
-    internal init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
+    public init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
         self.data = data
         self.comparator = comparator
     }
@@ -98,7 +98,7 @@ extension SortedCollectionSlice: BidirectionalCollection, RandomAccessCollection
     
 }
 
-extension SortedCollectionSlice: SortedOperations {}
+extension SortedCollectionSlice: SortedOperationsDefaults {}
 
 extension SortedCollectionSlice: Equatable where Element: Equatable {}
 

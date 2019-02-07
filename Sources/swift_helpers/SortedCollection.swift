@@ -157,7 +157,13 @@ extension SortedCollection: BidirectionalCollection, RandomAccessCollection {
     
 }
 
-extension SortedCollection: SortedOperations {}
+extension SortedCollection: SortedOperationsDefaults {
+    
+    public init(data: [Element], comparator: AnyComparator<Element>) {
+        self.init(unsortedSequence: data, comparator: comparator)
+    }
+    
+}
 
 extension SortedCollection: Equatable where Element: Equatable {}
 

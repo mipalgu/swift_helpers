@@ -70,7 +70,7 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func insertIndex(for: Element) -> Index
     
-    func find(_: Element) -> Slice<Self>
+    func find(_: Element) -> Self.SubSequence
     
     mutating func insert(_: Element)
     
@@ -84,14 +84,24 @@ public protocol ComparatorContainer {
     
 }
 
-extension SortedOperations where
+public protocol SortedOperationsDefaults: UnderlyingDataContainer, ComparatorContainer {
+    
+    init(data: Self.Buffer, comparator: AnyComparator<ComparatorElement>)
+    
+}
+
+extension SortedOperationsDefaults where
+    Self: RandomAccessCollection,
     Self: UnderlyingDataContainer,
     Self: ComparatorContainer,
     Self.Buffer: RandomAccessCollection,
     Self.Buffer: RangeReplaceableCollection,
     Self.Buffer.Element == Self.Element,
     Self.ComparatorElement == Self.Element,
-    Self.Buffer.Index == Self.Index
+    Self.Buffer.Index == Self.Index,
+    Self.SubSequence: SortedOperationsDefaults,
+    Self.SubSequence.Buffer == Self.Buffer.SubSequence,
+    Self.SubSequence.ComparatorElement == Self.Element
 {
     
     public func anyLocation(of element: Element) -> Self.Index {
@@ -155,8 +165,8 @@ extension SortedOperations where
         return self.index(self.startIndex, offsetBy: lower)
     }
     
-    public func find(_ element: Element) -> Slice<Self> {
-        return Slice(base: self, bounds: self.range(of: element))
+    public func find(_ element: Element) -> Self.SubSequence {
+        return Self.SubSequence.init(data: self.data[self.range(of: element)], comparator: self.comparator)
     }
     
     public mutating func insert(_ element: Element) {
