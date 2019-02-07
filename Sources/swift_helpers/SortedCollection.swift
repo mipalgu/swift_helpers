@@ -121,6 +121,38 @@ extension SortedCollection: Sequence {
     
 }
 
+extension SortedCollection: Collection {
+    
+    public var count: Int {
+        return self.data.count
+    }
+    
+    public var endIndex: Array<Element>.Index {
+        return self.data.endIndex
+    }
+    
+    public var first: Element? {
+        return self.data.first
+    }
+    
+    public var indices: Array<Element>.Indices {
+        return self.data.indices
+    }
+    
+    public var startIndex: Array<Element>.Index {
+        return self.data.startIndex
+    }
+    
+    public subscript(position: Array<Element>.Index) -> Element {
+        return self.data[position]
+    }
+    
+    public func index(after i: Array<Element>.Index) -> Array<Element>.Index {
+        return self.data.index(after: i)
+    }
+    
+}
+
 extension SortedCollection: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
