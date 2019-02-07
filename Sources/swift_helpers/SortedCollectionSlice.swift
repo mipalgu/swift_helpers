@@ -65,9 +65,9 @@ import Foundation
 public struct SortedCollectionSlice<Element> {
     
     fileprivate let comparator: AnyComparator<Element>
-    fileprivate var data: ArraySlice<Element>
+    fileprivate var data: Array<Element>.SubSequence
     
-    internal init(data: ArraySlice<Element>, comparator: AnyComparator<Element>) {
+    internal init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
         self.data = data
         self.comparator = comparator
     }
@@ -76,7 +76,7 @@ public struct SortedCollectionSlice<Element> {
 
 extension SortedCollectionSlice: Sequence {
     
-    public func makeIterator() -> ArraySlice<Element>.Iterator {
+    public func makeIterator() -> Array<Element>.SubSequence.Iterator {
         return self.data.makeIterator()
     }
     
@@ -88,7 +88,7 @@ extension SortedCollectionSlice: Collection {
         return self.data.count
     }
     
-    public var endIndex: ArraySlice<Element>.Index {
+    public var endIndex: Array<Element>.SubSequence.Index {
         return self.data.endIndex
     }
     
@@ -96,19 +96,19 @@ extension SortedCollectionSlice: Collection {
         return self.data.first
     }
     
-    public var indices: ArraySlice<Element>.Indices {
+    public var indices: Array<Element>.SubSequence.Indices {
         return self.data.indices
     }
     
-    public var startIndex: ArraySlice<Element>.Index {
+    public var startIndex: Array<Element>.SubSequence.Index {
         return self.data.startIndex
     }
     
-    public subscript(position: ArraySlice<Element>.Index) -> Element {
+    public subscript(position: Array<Element>.SubSequence.Index) -> Element {
         return self.data[position]
     }
     
-    public func index(after i: ArraySlice<Element>.Index) -> ArraySlice<Element>.Index {
+    public func index(after i: Array<Element>.SubSequence.Index) -> Array<Element>.SubSequence.Index {
         return self.data.index(after: i)
     }
     
@@ -116,7 +116,7 @@ extension SortedCollectionSlice: Collection {
 
 extension SortedCollectionSlice: BidirectionalCollection {
     
-    public func index(before i: ArraySlice<Element>.Index) -> ArraySlice<Element>.Index {
+    public func index(before i: Array<Element>.SubSequence.Index) -> Array<Element>.SubSequence.Index {
         return self.data.index(before: i)
     }
     
@@ -124,7 +124,7 @@ extension SortedCollectionSlice: BidirectionalCollection {
 
 extension SortedCollectionSlice: RandomAccessCollection {
     
-    public subscript(bounds: Range<ArraySlice<Element>.Index>) -> SortedCollectionSlice<Element> {
+    public subscript(bounds: Range<Array<Element>.SubSequence.Index>) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
     
@@ -132,7 +132,7 @@ extension SortedCollectionSlice: RandomAccessCollection {
 
 extension SortedCollectionSlice: SortedOperations {
     
-    public func anyLocation(of element: Element) -> ArraySlice<Element>.Index {
+    public func anyLocation(of element: Element) -> Array<Element>.SubSequence.Index {
         let index = self.insertIndex(for: element)
         if index == self.endIndex {
             return index
@@ -149,7 +149,7 @@ extension SortedCollectionSlice: SortedOperations {
         return self.anyLocation(of: element) != self.endIndex
     }
     
-    public func range(of element: Element) -> Range<ArraySlice<Element>.Index> {
+    public func range(of element: Element) -> Range<Array<Element>.SubSequence.Index> {
         let index = self.anyLocation(of: element)
         if index == self.endIndex {
             return self.endIndex ..< self.endIndex
@@ -159,7 +159,7 @@ extension SortedCollectionSlice: SortedOperations {
         return startIndex ..< endIndex
     }
     
-    public func firstLocation(of element: Element) -> ArraySlice<Element>.Index? {
+    public func firstLocation(of element: Element) -> Array<Element>.SubSequence.Index? {
         let index = self.anyLocation(of: element)
         if index == self.endIndex {
             return nil
@@ -167,7 +167,7 @@ extension SortedCollectionSlice: SortedOperations {
         return self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
     }
     
-    public func lastLocation(of element: Element) -> ArraySlice<Element>.Index? {
+    public func lastLocation(of element: Element) -> Array<Element>.SubSequence.Index? {
         let index = self.anyLocation(of: element)
         if index == self.endIndex {
             return nil
@@ -175,7 +175,7 @@ extension SortedCollectionSlice: SortedOperations {
         return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
     }
     
-    public func insertIndex(for element: Element) -> ArraySlice<Element>.Index {
+    public func insertIndex(for element: Element) -> Array<Element>.SubSequence.Index {
         var lower = 0
         var upper = self.count - 1
         while lower <= upper {
