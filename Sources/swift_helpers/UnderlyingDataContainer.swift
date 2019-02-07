@@ -1,5 +1,5 @@
 /*
- * SortedCollectionSlice.swift 
+ * UnderlyingDataContainer.swift 
  * swift_helpers 
  *
  * Created by Callum McColl on 08/02/2019.
@@ -56,50 +56,107 @@
  *
  */
 
-#if !NO_FOUNDATION
-#if canImport(Foundation)
-import Foundation
-#endif
-#endif
 
-public struct SortedCollectionSlice<Element>: UnderlyingDataContainer, ComparatorContainer {
+public protocol UnderlyingDataContainer {
     
-    public let comparator: AnyComparator<Element>
-    public var data: Array<Element>.SubSequence
+    associatedtype Buffer
     
-    internal init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
-        self.data = data
-        self.comparator = comparator
+    var data: Buffer { get set }
+    
+}
+
+extension UnderlyingDataContainer where
+    Self: Sequence,
+    Self.Buffer: Sequence,
+    Self.Iterator == Self.Buffer.Iterator
+{
+    
+    public func makeIterator() -> Self.Buffer.Iterator {
+        return self.data.makeIterator()
     }
     
 }
 
+extension UnderlyingDataContainer where
+    Self: Collection,
+    Self.Buffer: Collection,
+    Self.Index == Self.Buffer.Index,
+    Self.Indices == Self.Buffer.Indices,
+    Self.Iterator.Element == Self.Buffer.Element
+{
+    
+    public var count: Int {
+        return self.data.count
+    }
+    
+    public var endIndex: Self.Index {
+        return self.data.endIndex
+    }
+    
+    public var first: Element? {
+        return self.data.first
+    }
+    
+    public var indices: Self.Indices {
+        return self.data.indices
+    }
+    
+    public var startIndex: Self.Index {
+        return self.data.startIndex
+    }
+    
+    public subscript(position: Self.Index) -> Element {
+        return self.data[position]
+    }
+    
+}
 
-extension SortedCollectionSlice: BidirectionalCollection, RandomAccessCollection {
+extension UnderlyingDataContainer where
+    Self: BidirectionalCollection,
+    Self.Buffer: BidirectionalCollection,
+    Self.Index == Self.Buffer.Index,
+    Self.Iterator.Element == Buffer.Iterator.Element
+{
     
-    public typealias Buffer = Array<Element>.SubSequence
-    public typealias Index = Buffer.Index
-    public typealias Indices = Buffer.Indices
-    public typealias Iterator = Buffer.Iterator
-    public typealias IndexDistance = Int
-    public typealias SubSequence = SortedCollectionSlice<Element>
-    
-    public func index(after i: SortedCollectionSlice<Element>.Buffer.Index) -> SortedCollectionSlice<Element>.Buffer.Index {
+    public func index(after i: Self.Buffer.Index) -> Self.Buffer.Index {
         return self.data.index(after: i)
     }
     
-    public func index(before i: SortedCollectionSlice<Element>.Buffer.Index) -> SortedCollectionSlice<Element>.Buffer.Index {
+    public func index(before i: Self.Buffer.Index) -> Self.Buffer.Index {
         return self.data.index(before: i)
-    }
-    
-    public subscript(bounds: Range<Index>) -> SortedCollectionSlice<Element> {
-        return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
     
 }
 
-extension SortedCollectionSlice: SortedOperations {}
+extension UnderlyingDataContainer where
+    Self: RandomAccessCollection,
+    Self.Buffer: RandomAccessCollection,
+    Self.Index == Self.Buffer.Index,
+    Self.Indices == Self.Buffer.Indices
+{
+    
+    public func index(after i: Self.Buffer.Index) -> Self.Buffer.Index {
+        return self.data.index(after: i)
+    }
+    
+    public func index(before i: Self.Buffer.Index) -> Self.Buffer.Index {
+        return self.data.index(before: i)
+    }
+    
+}
 
-extension SortedCollectionSlice: Equatable where Element: Equatable {}
+extension UnderlyingDataContainer where Self: Equatable, Self.Buffer: Equatable {
+    
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.data == rhs.data
+    }
+    
+}
 
-extension SortedCollectionSlice: Hashable where Element: Hashable {}
+extension UnderlyingDataContainer where Self:Hashable, Self.Buffer: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.data)
+    }
+    
+}

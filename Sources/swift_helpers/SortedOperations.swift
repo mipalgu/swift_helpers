@@ -76,14 +76,6 @@ public protocol SortedOperations: RandomAccessCollection {
     
 }
 
-public protocol UnderlyingDataContainer {
-    
-    associatedtype Buffer: RandomAccessCollection, RangeReplaceableCollection
-    
-    var data: Buffer { get set }
-    
-}
-
 public protocol ComparatorContainer {
     
     associatedtype ComparatorElement
@@ -92,7 +84,15 @@ public protocol ComparatorContainer {
     
 }
 
-extension SortedOperations where Self: UnderlyingDataContainer, Self: ComparatorContainer, Self.Buffer.Element == Self.Element, Self.ComparatorElement == Self.Element, Self.Buffer.Index == Self.Index {
+extension SortedOperations where
+    Self: UnderlyingDataContainer,
+    Self: ComparatorContainer,
+    Self.Buffer: RandomAccessCollection,
+    Self.Buffer: RangeReplaceableCollection,
+    Self.Buffer.Element == Self.Element,
+    Self.ComparatorElement == Self.Element,
+    Self.Buffer.Index == Self.Index
+{
     
     public func anyLocation(of element: Element) -> Self.Index {
         let index = self.insertIndex(for: element)

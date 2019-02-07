@@ -123,57 +123,24 @@ extension SortedCollection: ExpressibleByArrayLiteral where Element: Comparable 
     
 }
 
-extension SortedCollection: Sequence {
+extension SortedCollection: BidirectionalCollection, RandomAccessCollection {
     
-    public func makeIterator() -> Array<Element>.Iterator {
-        return self.data.makeIterator()
-    }
+    public typealias Buffer = Array<Element>
+    public typealias Index = Buffer.Index
+    public typealias Indices = Buffer.Indices
+    public typealias Iterator = Buffer.Iterator
+    public typealias IndexDistance = Int
+    public typealias SubSequence = SortedCollectionSlice<Element>
     
-}
-
-extension SortedCollection: Collection {
-    
-    public var count: Int {
-        return self.data.count
-    }
-    
-    public var endIndex: Array<Element>.Index {
-        return self.data.endIndex
-    }
-    
-    public var first: Element? {
-        return self.data.first
-    }
-    
-    public var indices: Array<Element>.Indices {
-        return self.data.indices
-    }
-    
-    public var startIndex: Array<Element>.Index {
-        return self.data.startIndex
-    }
-    
-    public subscript(position: Array<Element>.Index) -> Element {
-        return self.data[position]
-    }
-    
-    public func index(after i: Array<Element>.Index) -> Array<Element>.Index {
+    public func index(after i: Index) -> Index {
         return self.data.index(after: i)
     }
     
-}
-
-extension SortedCollection: BidirectionalCollection {
-    
-    public func index(before i: Array<Element>.Index) -> Array<Element>.Index {
+    public func index(before i: Index) -> Index {
         return self.data.index(before: i)
     }
     
-}
-
-extension SortedCollection: RandomAccessCollection {
-    
-    public subscript(bounds: Range<Array<Element>.Index>) -> SortedCollectionSlice<Element> {
+    public subscript(bounds: Range<Index>) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
     
@@ -181,18 +148,6 @@ extension SortedCollection: RandomAccessCollection {
 
 extension SortedCollection: SortedOperations {}
 
-extension SortedCollection: Equatable where Element: Equatable {
-    
-    public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
-        return lhs.data == rhs.data
-    }
-    
-}
+extension SortedCollection: Equatable where Element: Equatable {}
 
-extension SortedCollection: Hashable where Element: Hashable {
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.data)
-    }
-    
-}
+extension SortedCollection: Hashable where Element: Hashable {}
