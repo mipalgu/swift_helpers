@@ -132,18 +132,6 @@ extension SortedCollectionSlice: RandomAccessCollection {
 
 extension SortedCollectionSlice: SortedOperations {}
 
-extension SortedCollectionSlice {
-    
-    public func sortedCollection(_ compare: @escaping (Element, Element) -> ComparisonResult) -> SortedCollection<Element> {
-        return SortedCollection(unsortedSequence: self, comparator: AnyComparator(compare))
-    }
-    
-    public func sortedCollection() -> SortedCollection<Element> {
-        return SortedCollection(unsortedSequence: self, comparator: self.comparator)
-    }
-    
-}
-
 extension SortedCollectionSlice: Equatable where Element: Equatable {
     
     public static func == (lhs: SortedCollectionSlice<Element>, rhs: SortedCollectionSlice<Element>) -> Bool {
