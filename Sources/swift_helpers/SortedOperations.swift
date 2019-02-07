@@ -75,3 +75,92 @@ public protocol SortedOperations: RandomAccessCollection {
     mutating func insert(_: Element)
     
 }
+
+public protocol UnderlyingDataContainer {
+    
+    associatedtype Buffer: RandomAccessCollection, RangeReplaceableCollection
+    
+    var data: Buffer { get set }
+    
+}
+
+public protocol ComparatorContainer {
+    
+    associatedtype ComparatorElement
+    
+    var comparator: AnyComparator<ComparatorElement> { get }
+    
+}
+
+extension SortedOperations where Self: UnderlyingDataContainer, Self: ComparatorContainer, Self.Buffer.Element == Self.Element, Self.ComparatorElement == Self.Element, Self.Buffer.Index == Self.Index {
+    
+    public func anyLocation(of element: Element) -> Self.Index {
+        let index = self.insertIndex(for: element)
+        if index == self.endIndex {
+            return index
+        }
+        switch self.comparator.compare(lhs: self[index], rhs: element) {
+        case .orderedSame:
+            return index
+        default:
+            return self.endIndex
+        }
+    }
+    
+    public func contains(_ element: Element) -> Bool {
+        return self.anyLocation(of: element) != self.endIndex
+    }
+    
+    public func range(of element: Element) -> Range<Self.Index> {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return self.endIndex ..< self.endIndex
+        }
+        let startIndex = self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+        let endIndex = self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+        return startIndex ..< endIndex
+    }
+    
+    public func firstLocation(of element: Element) -> Self.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+    }
+    
+    public func lastLocation(of element: Element) -> Self.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+    }
+    
+    public func insertIndex(for element: Element) -> Self.Index {
+        var lower = 0
+        var upper = self.count - 1
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
+            case .orderedSame:
+                return currentIndex
+            case .orderedDescending:
+                upper = offset - 1
+            case .orderedAscending:
+                lower = offset + 1
+            }
+        }
+        return self.index(self.startIndex, offsetBy: lower)
+    }
+    
+    public func find(_ element: Element) -> Slice<Self> {
+        return Slice(base: self, bounds: self.range(of: element))
+    }
+    
+    public mutating func insert(_ element: Element) {
+        self.data.insert(element, at: self.insertIndex(for: element))
+    }
+    
+}
