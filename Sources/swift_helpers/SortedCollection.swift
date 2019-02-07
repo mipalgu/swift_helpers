@@ -112,3 +112,19 @@ extension SortedCollection where Element: Comparable {
     }
     
 }
+
+extension SortedCollection: Equatable where Element: Equatable {
+    
+    public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
+        return lhs.data == rhs.data
+    }
+    
+}
+
+extension SortedCollection: Hashable where Element: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.data)
+    }
+    
+}
