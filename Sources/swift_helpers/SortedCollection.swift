@@ -72,14 +72,21 @@ public struct SortedCollection<Element>: UnderlyingDataContainer, ComparatorCont
     }
     
     public init<S: Sequence>(unsortedSequence: S, comparator: AnyComparator<Element>) where S.Element == Element {
-        self.data = unsortedSequence.sorted {
-            switch comparator.compare(lhs: $0, rhs: $1) {
-            case .orderedAscending:
-                return true
-            default:
-                return false
-            }
-        }
+        self.init(
+            sortedArray: unsortedSequence.sorted {
+                switch comparator.compare(lhs: $0, rhs: $1) {
+                case .orderedAscending:
+                    return true
+                default:
+                    return false
+                }
+            },
+            comparator: comparator
+        )
+    }
+    
+    public init(sortedArray: [Element], comparator: AnyComparator<Element>) {
+        self.data = sortedArray
         self.comparator = comparator
     }
     
@@ -88,8 +95,12 @@ public struct SortedCollection<Element>: UnderlyingDataContainer, ComparatorCont
 extension SortedCollection where Element: Comparable {
     
     public init<S: Sequence>(unsortedSequence: S) where S.Element == Element {
+        self.init(sortedArray: unsortedSequence.sorted())
+    }
+    
+    public init(sortedArray: [Element]) {
         self.init(
-            unsortedSequence: unsortedSequence,
+            sortedArray: sortedArray,
             comparator: AnyComparator {
                 if $0 < $1 {
                     return .orderedAscending
