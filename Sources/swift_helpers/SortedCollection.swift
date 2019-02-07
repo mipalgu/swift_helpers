@@ -87,7 +87,7 @@ public struct SortedCollection<Element> {
 
 extension SortedCollection where Element: Comparable {
     
-    public init<S: Sequence>(unsortedSequence: S) where S.Element == Element, S.Element: Comparable {
+    public init<S: Sequence>(unsortedSequence: S) where S.Element == Element {
         self.init(
             unsortedSequence: unsortedSequence,
             comparator: AnyComparator {
