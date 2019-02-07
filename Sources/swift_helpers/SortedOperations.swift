@@ -70,4 +70,6 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func insertIndex(for: Element) -> Index
     
+    mutating func insert(_: Element)
+    
 }

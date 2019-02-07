@@ -232,6 +232,15 @@ extension SortedCollection: SortedOperations {
         return self.index(self.startIndex, offsetBy: lower)
     }
     
+    public mutating func insert(_ element: Element) {
+        let index = self.insertIndex(for: element)
+        if index == self.endIndex {
+            self.data.append(element)
+            return
+        }
+        self.data.insert(element, at: index)
+    }
+    
 }
 
 extension SortedCollection: Equatable where Element: Equatable {
