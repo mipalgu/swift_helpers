@@ -68,4 +68,6 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func lastLocation(of: Element) -> Index?
     
+    func insertIndex(for: Element) -> Index
+    
 }

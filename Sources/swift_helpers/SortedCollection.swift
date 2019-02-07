@@ -172,21 +172,16 @@ extension SortedCollection: RandomAccessCollection {
 extension SortedCollection: SortedOperations {
     
     public func anyLocation(of element: Element) -> Array<Element>.Index {
-        var lower = 0
-        var upper = self.count - 1
-        while lower <= upper {
-            let offset = (lower + upper) / 2
-            let currentIndex = self.index(self.startIndex, offsetBy: offset)
-            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
-            case .orderedSame:
-                return currentIndex
-            case .orderedDescending:
-                upper = offset - 1
-            case .orderedAscending:
-                lower = offset + 1
-            }
+        let index = self.insertIndex(for: element)
+        if index == self.endIndex {
+            return index
         }
-        return self.endIndex
+        switch self.comparator.compare(lhs: self[index], rhs: element) {
+        case .orderedSame:
+            return index
+        default:
+            return self.endIndex
+        }
     }
     
     public func contains(_ element: Element) -> Bool {
@@ -217,6 +212,24 @@ extension SortedCollection: SortedOperations {
             return nil
         }
         return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+    }
+    
+    public func insertIndex(for element: Element) -> Array<Element>.Index {
+        var lower = 0
+        var upper = self.count - 1
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
+            case .orderedSame:
+                return currentIndex
+            case .orderedDescending:
+                upper = offset - 1
+            case .orderedAscending:
+                lower = offset + 1
+            }
+        }
+        return self.index(self.startIndex, offsetBy: lower)
     }
     
 }
