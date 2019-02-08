@@ -338,11 +338,11 @@ extension SortedCollection: SortedOperations {
         return SortedCollectionSlice(data: self.data[self.range(of: element)], comparator: self.comparator)
     }
     
-    public func lessThan(_ element: Element) -> SortedCollectionSlice<Element> {
+    public func left(of element: Element) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)], comparator: self.comparator)
     }
     
-    public func greaterThan(_ element: Element) -> SortedCollectionSlice<Element> {
+    public func right(of element: Element) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex], comparator: self.comparator)
     }
     

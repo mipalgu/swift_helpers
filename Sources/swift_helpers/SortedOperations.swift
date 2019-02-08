@@ -72,9 +72,9 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func find(_: Element) -> Self.SubSequence
     
-    func lessThan(_: Element) -> Self.SubSequence
+    func left(of: Element) -> Self.SubSequence
     
-    func greaterThan(_: Element) -> Self.SubSequence
+    func right(of: Element) -> Self.SubSequence
     
     mutating func insert(_: Element)
     
