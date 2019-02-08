@@ -79,3 +79,61 @@ public protocol SortedOperations: RandomAccessCollection {
     mutating func insert(_: Element)
     
 }
+
+extension SortedOperations where Self.SubSequence: SortedOperations {
+    
+    @inline(__always)
+    public func contains(_ element: Element) -> Bool {
+        return self.anyLocation(of: element) != nil
+    }
+    
+    @inline(__always)
+    public func range(of element: Element) -> Range<Self.Index> {
+        guard let startIndex = self.firstLocation(of: element), let endIndex = self.lastLocation(of: element) else {
+            return self.endIndex ..< self.endIndex
+        }
+        return startIndex ..< self.index(after: endIndex)
+    }
+    
+    @inline(__always)
+    public func firstLocation(of element: Element) -> Self.Index? {
+        guard let index = self.anyLocation(of: element) else {
+            return nil
+        }
+        return self[self.startIndex ..< index].firstLocation(of: element) ?? index
+    }
+    
+    @inline(__always)
+    public func lastLocation(of element: Element) -> Self.Index? {
+        guard let index = self.anyLocation(of: element) else {
+            return nil
+        }
+        return self[self.index(after: index) ..< self.endIndex].lastLocation(of: element) ?? index
+    }
+    
+    @inline(__always)
+    public func find(_ element: Element) -> Self.SubSequence {
+        return self[self.range(of: element)]
+    }
+    
+    @inline(__always)
+    public func left(of element: Element) -> Self.SubSequence {
+        return self[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)]
+    }
+    
+    @inline(__always)
+    public func left(ofAndIncluding element: Element) -> Self.SubSequence {
+        return self[self.startIndex ..< (self.lastLocation(of: element).map { self.index(after: $0) } ?? self.startIndex)]
+    }
+    
+    @inline(__always)
+    public func right(of element: Element) -> Self.SubSequence {
+        return self[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex]
+    }
+    
+    @inline(__always)
+    public func right(ofAndIncluding element: Element) -> Self.SubSequence {
+        return self[(self.firstLocation(of: element) ?? self.endIndex) ..< self.endIndex]
+    }
+    
+}
