@@ -58,15 +58,15 @@
 
 public protocol SortedOperations: RandomAccessCollection {
     
-    func anyLocation(of: Element) -> Index?
+    func anyIndex(of: Element) -> Index?
     
     func contains(_ element: Element) -> Bool
     
     func range(of: Element) -> Range<Index>
     
-    func firstLocation(of: Element) -> Index?
+    func firstIndex(of: Element) -> Index?
     
-    func lastLocation(of: Element) -> Index?
+    func lastIndex(of: Element) -> Index?
     
     func search(for: Element) -> (Bool, Index)
     
@@ -82,38 +82,38 @@ public protocol SortedOperations: RandomAccessCollection {
 
 extension SortedOperations where Self.SubSequence: SortedOperations {
     
-    public func anyLocation(of element: Element) -> Self.Index? {
+    public func anyIndex(of element: Element) -> Self.Index? {
         let (found, index) = self.search(for: element)
         return found ? index : nil
     }
     
     @inline(__always)
     public func contains(_ element: Element) -> Bool {
-        return self.anyLocation(of: element) != nil
+        return self.anyIndex(of: element) != nil
     }
     
     @inline(__always)
     public func range(of element: Element) -> Range<Self.Index> {
-        guard let startIndex = self.firstLocation(of: element), let endIndex = self.lastLocation(of: element) else {
+        guard let startIndex = self.firstIndex(of: element), let endIndex = self.lastIndex(of: element) else {
             return self.endIndex ..< self.endIndex
         }
         return startIndex ..< self.index(after: endIndex)
     }
     
     @inline(__always)
-    public func firstLocation(of element: Element) -> Self.Index? {
-        guard let index = self.anyLocation(of: element) else {
+    public func firstIndex(of element: Element) -> Self.Index? {
+        guard let index = self.anyIndex(of: element) else {
             return nil
         }
-        return self[self.startIndex ..< index].firstLocation(of: element) ?? index
+        return self[self.startIndex ..< index].firstIndex(of: element) ?? index
     }
     
     @inline(__always)
-    public func lastLocation(of element: Element) -> Self.Index? {
-        guard let index = self.anyLocation(of: element) else {
+    public func lastIndex(of element: Element) -> Self.Index? {
+        guard let index = self.anyIndex(of: element) else {
             return nil
         }
-        return self[self.index(after: index) ..< self.endIndex].lastLocation(of: element) ?? index
+        return self[self.index(after: index) ..< self.endIndex].lastIndex(of: element) ?? index
     }
     
     @inline(__always)
@@ -123,22 +123,22 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
     
     @inline(__always)
     public func left(of element: Element) -> Self.SubSequence {
-        return self[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)]
+        return self[self.startIndex ..< (self.firstIndex(of: element) ?? self.startIndex)]
     }
     
     @inline(__always)
     public func left(ofAndIncluding element: Element) -> Self.SubSequence {
-        return self[self.startIndex ..< (self.lastLocation(of: element).map { self.index(after: $0) } ?? self.startIndex)]
+        return self[self.startIndex ..< (self.lastIndex(of: element).map { self.index(after: $0) } ?? self.startIndex)]
     }
     
     @inline(__always)
     public func right(of element: Element) -> Self.SubSequence {
-        return self[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex]
+        return self[(self.lastIndex(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex]
     }
     
     @inline(__always)
     public func right(ofAndIncluding element: Element) -> Self.SubSequence {
-        return self[(self.firstLocation(of: element) ?? self.endIndex) ..< self.endIndex]
+        return self[(self.firstIndex(of: element) ?? self.endIndex) ..< self.endIndex]
     }
     
 }
