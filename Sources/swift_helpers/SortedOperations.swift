@@ -58,7 +58,7 @@
 
 public protocol SortedOperations: RandomAccessCollection {
     
-    func anyLocation(of: Element) -> Index
+    func anyLocation(of: Element) -> Index?
     
     func contains(_ element: Element) -> Bool
     

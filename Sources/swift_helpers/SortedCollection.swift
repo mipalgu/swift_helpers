@@ -274,57 +274,46 @@ extension SortedCollection: RandomAccessCollection {
 
 extension SortedCollection: SortedOperations {
     
-    public func anyLocation(of element: Element) -> Array<Element>.Index {
+    public func anyLocation(of element: Element) -> Array<Element>.Index? {
         let index = self.insertIndex(for: element)
         if index == self.endIndex {
-            return index
+            return nil
         }
         switch self.comparator.compare(lhs: self[index], rhs: element) {
         case .orderedSame:
             return index
         default:
-            return self.endIndex
+            return nil
         }
     }
     
+    @inline(__always)
     public func contains(_ element: Element) -> Bool {
         return self.anyLocation(of: element) != self.endIndex
     }
     
+    @inline(__always)
     public func range(of element: Element) -> Range<Array<Element>.Index> {
-        let index = self.anyLocation(of: element)
-        if index == self.endIndex {
+        guard let startIndex = self.firstLocation(of: element), let endIndex = self.lastLocation(of: element) else {
             return self.endIndex ..< self.endIndex
         }
-        let startIndex = self.strideLeft(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
-        let endIndex =  self.strideRight(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
-        return startIndex ..< endIndex
+        return startIndex ..< self.index(after: endIndex)
     }
     
+    @inline(__always)
     public func firstLocation(of element: Element) -> Array<Element>.Index? {
-        let index = self.anyLocation(of: element)
-        if index == self.endIndex {
+        guard let index = self.anyLocation(of: element) else {
             return nil
         }
-        return self.strideLeft(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
+        return self[self.startIndex ..< index].firstLocation(of: element) ?? index
     }
     
+    @inline(__always)
     public func lastLocation(of element: Element) -> Array<Element>.Index? {
-        let index = self.anyLocation(of: element)
-        if index == self.endIndex {
+        guard let index = self.anyLocation(of: element) else {
             return nil
         }
-        return self.strideRight(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
-    }
-    
-    @inline(__always)
-    fileprivate func strideLeft(from index: Array<Element>.Index, until shouldntContinue: (Element) -> Bool) -> Array<Element>.Index {
-        return self[self.startIndex ..< index].reversed().firstIndex(where: shouldntContinue)?.base ?? self.startIndex
-    }
-    
-    @inline(__always)
-    fileprivate func strideRight(from index: Array<Element>.Index, until shouldntContinue: (Element) -> Bool) -> Array<Element>.Index {
-        return self[self.index(after: index) ..< self.endIndex].firstIndex(where: shouldntContinue) ?? self.endIndex
+        return self[self.index(after: index) ..< self.endIndex].lastLocation(of: element) ?? index
     }
     
     public func insertIndex(for element: Element) -> Array<Element>.Index {
