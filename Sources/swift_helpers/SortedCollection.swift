@@ -206,8 +206,8 @@ extension SortedCollection: SortedOperations {
         if index == self.endIndex {
             return self.endIndex ..< self.endIndex
         }
-        let startIndex = self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
-        let endIndex = self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+        let startIndex = self.strideLeft(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
+        let endIndex =  self.strideRight(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
         return startIndex ..< endIndex
     }
     
@@ -216,7 +216,7 @@ extension SortedCollection: SortedOperations {
         if index == self.endIndex {
             return nil
         }
-        return self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+        return self.strideLeft(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
     }
     
     public func lastLocation(of element: Element) -> Array<Element>.Index? {
@@ -224,7 +224,17 @@ extension SortedCollection: SortedOperations {
         if index == self.endIndex {
             return nil
         }
-        return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+        return self.strideRight(from: index) { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }
+    }
+    
+    @inline(__always)
+    fileprivate func strideLeft(from index: Array<Element>.Index, until shouldntContinue: (Element) -> Bool) -> Array<Element>.Index {
+        return self[self.startIndex ..< index].reversed().firstIndex(where: shouldntContinue)?.base ?? self.startIndex
+    }
+    
+    @inline(__always)
+    fileprivate func strideRight(from index: Array<Element>.Index, until shouldntContinue: (Element) -> Bool) -> Array<Element>.Index {
+        return self[self.index(after: index) ..< self.endIndex].firstIndex(where: shouldntContinue) ?? self.endIndex
     }
     
     public func insertIndex(for element: Element) -> Array<Element>.Index {
