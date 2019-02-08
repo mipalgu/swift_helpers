@@ -140,7 +140,7 @@ extension SortedCollectionSlice: SortedOperations {
     
     @inline(__always)
     public func contains(_ element: Element) -> Bool {
-        return self.anyLocation(of: element) != self.endIndex
+        return self.anyLocation(of: element) != nil
     }
     
     @inline(__always)
