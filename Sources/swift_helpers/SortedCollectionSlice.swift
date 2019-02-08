@@ -125,20 +125,7 @@ extension SortedCollectionSlice: RandomAccessCollection {
 
 extension SortedCollectionSlice: SortedOperations {
     
-    public func anyLocation(of element: Element) -> Array<Element>.SubSequence.Index? {
-        let index = self.insertIndex(for: element)
-        if index == self.endIndex {
-            return nil
-        }
-        switch self.comparator.compare(lhs: self[index], rhs: element) {
-        case .orderedSame:
-            return index
-        default:
-            return nil
-        }
-    }
-    
-    public func insertIndex(for element: Element) -> Array<Element>.SubSequence.Index {
+    public func search(for element: Element) -> (Bool, Array<Element>.SubSequence.Index) {
         var lower = 0
         var upper = self.count - 1
         while lower <= upper {
@@ -146,18 +133,18 @@ extension SortedCollectionSlice: SortedOperations {
             let currentIndex = self.index(self.startIndex, offsetBy: offset)
             switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
             case .orderedSame:
-                return currentIndex
+                return (true, currentIndex)
             case .orderedDescending:
                 upper = offset - 1
             case .orderedAscending:
                 lower = offset + 1
             }
         }
-        return self.index(self.startIndex, offsetBy: lower)
+        return (false, self.index(self.startIndex, offsetBy: lower))
     }
     
     public mutating func insert(_ element: Element) {
-        self.data.insert(element, at: self.insertIndex(for: element))
+        self.data.insert(element, at: self.search(for: element).1)
     }
     
 }

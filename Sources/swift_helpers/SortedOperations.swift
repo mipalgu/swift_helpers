@@ -68,7 +68,7 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func lastLocation(of: Element) -> Index?
     
-    func insertIndex(for: Element) -> Index
+    func search(for: Element) -> (Bool, Index)
     
     func find(_: Element) -> Self.SubSequence
     
@@ -81,6 +81,11 @@ public protocol SortedOperations: RandomAccessCollection {
 }
 
 extension SortedOperations where Self.SubSequence: SortedOperations {
+    
+    public func anyLocation(of element: Element) -> Self.Index? {
+        let (found, index) = self.search(for: element)
+        return found ? index : nil
+    }
     
     @inline(__always)
     public func contains(_ element: Element) -> Bool {
