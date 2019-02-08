@@ -114,7 +114,7 @@ extension SortedCollection where Element: Comparable {
     }
     
     public init() {
-        self.init(unsortedSequence: [])
+        self.init(sortedArray: [])
     }
     
     public init(minimumCapacity: Int) {
