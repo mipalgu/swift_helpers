@@ -1,9 +1,9 @@
 /*
- * Sequence.swift 
- * classgenerator 
+ * AnyComparator.swift 
+ * swift_helpers 
  *
- * Created by Callum McColl on 05/08/2017.
- * Copyright © 2017 Callum McColl. All rights reserved.
+ * Created by Callum McColl on 08/02/2019.
+ * Copyright © 2019 Callum McColl. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,81 +62,20 @@ import Foundation
 #endif
 #endif
 
-extension Sequence where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
-
-    public func trim(
-        _ shouldTrim: (Self.Iterator.Element) throws -> Bool
-    ) rethrows -> Slice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
-        let droppedReversed = try self.reversed().drop(while: shouldTrim)
-        return try droppedReversed.reversed().drop(while: shouldTrim)
-    }
-
-}
-
-extension Sequence where
-    Self.SubSequence: Sequence,
-    Self.SubSequence.Iterator.Element == Self.Iterator.Element,
-    Self.Iterator.Element: Equatable
-{
-
-    public func trim(
-        _ element: Self.Iterator.Element
-    ) -> Slice<ReversedRandomAccessCollection<ArraySlice<Self.Element>>> {
-        return self.trim { $0 == element }
-    }
-
-}
-
-extension Sequence where
-    Self.SubSequence: Sequence,
-    Self.SubSequence.Iterator.Element == Self.Iterator.Element,
-    Self.SubSequence.SubSequence: Sequence,
-    Self.SubSequence.SubSequence.Iterator.Element == Self.Iterator.Element
-{
-
-    public func combine(
-        _ failSafe: Self.Iterator.Element,
-        _ transform: (Self.Iterator.Element, Self.Iterator.Element) throws -> Self.Iterator.Element
-    ) rethrows -> Self.Iterator.Element {
-        guard let first = self.first(where: { _ in true }) else {
-            return failSafe
-        }
-        guard let second = self.dropFirst().first(where: { _ in true }) else {
-            return first
-        }
-        let firstResult = try transform(first, second)
-        return try self.dropFirst().dropFirst().reduce(firstResult, transform)
-    }
-
-}
-
-extension Sequence {
-
-    public func failMap<T>(_ transform: (Self.Iterator.Element) throws -> T?) rethrows -> [T]? {
-        var arr: [T] = []
-        for e in self {
-            guard let r = try transform(e) else {
-                return nil
-            }
-            arr.append(r)
-        }
-        return arr
-    }
-
-}
-
-extension Sequence {
+public struct AnyComparator<Element>: Comparator {
     
-    public func sortedCollection(_ compare: @escaping (Self.Iterator.Element, Self.Iterator.Element) -> ComparisonResult) -> SortedCollection<Self.Iterator.Element> {
-        return SortedCollection(unsortedSequence: self, comparator: AnyComparator(compare))
+    fileprivate var _compare: (Element, Element) -> ComparisonResult
+    
+    public init<C: Comparator>(_ base: C) where C.Element == Element {
+        self._compare = { base.compare(lhs: $0, rhs: $1) }
     }
     
-}
-
-extension Sequence where Self.Iterator.Element: Comparable {
+    public init(_ compare: @escaping (Element, Element) -> ComparisonResult) {
+        self._compare = compare
+    }
     
-    public func sortedCollection() -> SortedCollection<Self.Iterator.Element> {
-        return SortedCollection(unsortedSequence: self)
+    public func compare(lhs: Element, rhs: Element) -> ComparisonResult {
+        return self._compare(lhs, rhs)
     }
     
 }
