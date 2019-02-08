@@ -342,8 +342,16 @@ extension SortedCollection: SortedOperations {
         return SortedCollectionSlice(data: self.data[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)], comparator: self.comparator)
     }
     
+    public func left(ofAndIncluding element: Element) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[self.startIndex ..< (self.lastLocation(of: element).map { self.index(after: $0) } ?? self.startIndex)], comparator: self.comparator)
+    }
+    
     public func right(of element: Element) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex], comparator: self.comparator)
+    }
+    
+    public func right(ofAndIncluding element: Element) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[(self.firstLocation(of: element) ?? self.endIndex) ..< self.endIndex], comparator: self.comparator)
     }
     
     public mutating func insert(_ element: Element) {
