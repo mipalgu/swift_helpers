@@ -62,15 +62,54 @@ import Foundation
 #endif
 #endif
 
+/**
+ *  A sorted, random-access collection.
+ *
+ *  A `SortedCollection` is a collections that keeps its elements sorted at all
+ *  times. This therefore allows the collection to optimize several searching
+ *  operations. Use a `SortedCollection` if you want a collection that allows
+ *  duplicate elements but also allows quick lookups.
+ *
+ *  A `SortedCollection` uses a `Comparator` to order the elements. This removes
+ *  the need for elements to be `Comparable`. The advantage is that a
+ *  `Comparator` is able to change the way in which elements are ordered.
+ */
 public struct SortedCollection<Element> {
     
     fileprivate let comparator: AnyComparator<Element>
     fileprivate var data: [Element]
     
+    /**
+     *  Create a new empty `SortedCollection`.
+     *
+     *  - Parameter comparator: The `Comparator` that will be used to sort the
+     *  elements.
+     *
+     *  - Returns: A new empty `SortedCollection` sorted on `comparator`.
+     */
     public init(comparator: AnyComparator<Element>) {
         self.init(sortedArray: [], comparator: comparator)
     }
     
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
+     *  unsorted `Sequence`.
+     *
+     *  When creating the `SortedCollection`, `unsortedSequence`'s elements will
+     *  be copied and sorted using `comparator`.
+     *
+     *  - Parameter unsortedSequence: An unsorted sequence containing the new
+     *  `SortedCollection`'s elements.
+     *
+     *  - Parameter comparator: The `Comparator` that will be used to sort any
+     *  future elements being inserted into the collection as well as the
+     *  elements within `unsortedSequence`.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `unsortedSequence` sorted on `comparator`.
+     *
+     *  - Complexity: O(n ^ 2)
+     */
     public init<S: Sequence>(unsortedSequence: S, comparator: AnyComparator<Element>) where S.Element == Element {
         self.init(
             sortedArray: unsortedSequence.sorted {
@@ -85,6 +124,26 @@ public struct SortedCollection<Element> {
         )
     }
     
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
+     *  sorted `Array`.
+     *
+     *  - Parameter sortedArray: A sorted `Array` containing the new
+     *  `SortedCollection`'s elements.
+     *
+     *  - Parameter comparator: The `Comparator` that will be used to sort any
+     *  future elements being inserted into the collection.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `sortedArray` in the order in which they are given.
+     *
+     *  - Complexity: O(n)
+     *
+     *  - Warning: It is important to ensure that the elements in
+     *  `sortedArray` are already sorted and conform to the sorting method
+     *  provided by `comparator`. If they are not then the behaviour of the
+     *  `SortedCollection` is undefined.
+     */
     public init(sortedArray: [Element], comparator: AnyComparator<Element>) {
         self.data = sortedArray
         self.comparator = comparator
@@ -94,10 +153,41 @@ public struct SortedCollection<Element> {
 
 extension SortedCollection where Element: Comparable {
     
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
+     *  unsorted `Sequence`.
+     *
+     *  When creating the `SortedCollection`, `unsortedSequence`'s elements will
+     *  be copied and sorted in ascending order.
+     *
+     *  - Parameter unsortedSequence: An unsorted sequence containing the new
+     *  `SortedCollection`'s elements.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `unsortedSequence` sorted in ascending order.
+     *
+     *  - Complexity: O(n ^ 2)
+     */
     public init<S: Sequence>(unsortedSequence: S) where S.Element == Element {
         self.init(sortedArray: unsortedSequence.sorted())
     }
     
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
+     *  sorted `Array`.
+     *
+     *  - Parameter sortedArray: A sorted `Array` containing the new
+     *  `SortedCollection`'s elements in ascending order.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `sortedArray`.
+     *
+     *  - Complexity: O(n)
+     *
+     *  - Warning: It is important to ensure that the elements in
+     *  `sortedArray` are already sorted in ascending order. If they are not
+     *  then the behaviour of the `SortedCollection` is undefined.
+     */
     public init(sortedArray: [Element]) {
         self.init(
             sortedArray: sortedArray,
