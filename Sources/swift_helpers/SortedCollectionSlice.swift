@@ -147,6 +147,10 @@ extension SortedCollectionSlice: SortedOperations {
         self.data.insert(element, at: self.search(for: element).1)
     }
     
+    public mutating func removeSubrange(_ bounds: Range<Array<Element>.SubSequence.Index>) {
+        self.data.removeSubrange(bounds)
+    }
+    
 }
 
 extension SortedCollectionSlice: Equatable where Element: Equatable {

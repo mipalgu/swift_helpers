@@ -296,6 +296,10 @@ extension SortedCollection: SortedOperations {
         self.data.insert(element, at: self.search(for: element).1)
     }
     
+    public mutating func removeSubrange(_ bounds: Range<Array<Element>.Index>) {
+        self.data.removeSubrange(bounds)
+    }
+    
 }
 
 extension SortedCollection: Equatable where Element: Equatable {

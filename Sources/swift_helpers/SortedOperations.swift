@@ -82,6 +82,18 @@ public protocol SortedOperations: RandomAccessCollection {
     
     mutating func insert(_: Element)
     
+    mutating func remove(at: Self.Index) -> Element
+    
+    mutating func removeSubrange(_: Range<Self.Index>)
+    
+    mutating func removeAny(_: Element)
+    
+    mutating func removeFirst(_: Element)
+    
+    mutating func removeLast(_: Element)
+    
+    mutating func removeAll(_: Element)
+    
 }
 
 extension SortedOperations where Self.SubSequence: SortedOperations {
@@ -144,6 +156,42 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
     @inline(__always)
     public func right(ofAndIncluding element: Element) -> Self.SubSequence {
         return self[(self.firstIndex(of: element) ?? self.endIndex) ..< self.endIndex]
+    }
+    
+    @inline(__always)
+    public mutating func remove(at index: Self.Index) -> Element {
+        let element = self[index]
+        self.removeSubrange(index ..< self.index(after: index))
+        return element
+    }
+    
+    @inline(__always)
+    public mutating func removeAny(_ element: Element) {
+        guard let index = self.anyIndex(of: element) else {
+            return
+        }
+        _ = self.remove(at: index)
+    }
+    
+    @inline(__always)
+    public mutating func removeFirst(_ element: Element) {
+        guard let index = self.firstIndex(of: element) else {
+            return
+        }
+        _ = self.remove(at: index)
+    }
+    
+    @inline(__always)
+    public mutating func removeLast(_ element: Element) {
+        guard let index = self.lastIndex(of: element) else {
+            return
+        }
+        _ = self.remove(at: index)
+    }
+    
+    @inline(__always)
+    public mutating func removeAll(_ element: Element) {
+        self.removeSubrange(self.range(of: element))
     }
     
 }
