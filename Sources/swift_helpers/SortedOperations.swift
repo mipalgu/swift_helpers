@@ -74,7 +74,11 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func left(of: Element) -> Self.SubSequence
     
+    func left(ofAndIncluding: Element) -> Self.SubSequence
+    
     func right(of: Element) -> Self.SubSequence
+    
+    func right(ofAndIncluding: Element) -> Self.SubSequence
     
     mutating func insert(_: Element)
     
@@ -82,6 +86,7 @@ public protocol SortedOperations: RandomAccessCollection {
 
 extension SortedOperations where Self.SubSequence: SortedOperations {
     
+    @inline(__always)
     public func anyIndex(of element: Element) -> Self.Index? {
         let (found, index) = self.search(for: element)
         return found ? index : nil
