@@ -133,17 +133,17 @@ public class SequenceTests: XCTestCase {
     
     public func test_insertingIntoSortedCollection() {
         var collection: SortedCollection<Int> = []
-        XCTAssertEqual([], collection.data)
+        XCTAssertEqual([], Array(collection))
         collection.insert(1)
-        XCTAssertEqual([1], collection.data)
+        XCTAssertEqual([1], Array(collection))
         collection.insert(2)
-        XCTAssertEqual([1, 2], collection.data)
+        XCTAssertEqual([1, 2], Array(collection))
         collection.insert(2)
-        XCTAssertEqual([1, 2, 2], collection.data)
+        XCTAssertEqual([1, 2, 2], Array(collection))
         collection.insert(0)
-        XCTAssertEqual([0, 1, 2, 2], collection.data)
+        XCTAssertEqual([0, 1, 2, 2], Array(collection))
         collection.insert(-1)
-        XCTAssertEqual([-1, 0, 1, 2, 2], collection.data)
+        XCTAssertEqual([-1, 0, 1, 2, 2], Array(collection))
     }
     
     public func test_performance() {

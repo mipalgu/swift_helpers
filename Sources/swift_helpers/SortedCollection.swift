@@ -62,13 +62,13 @@ import Foundation
 #endif
 #endif
 
-public struct SortedCollection<Element>: UnderlyingDataContainer, ComparatorContainer {
+public struct SortedCollection<Element> {
     
-    public let comparator: AnyComparator<Element>
-    public var data: [Element]
+    fileprivate let comparator: AnyComparator<Element>
+    fileprivate var data: [Element]
     
     public init(comparator: AnyComparator<Element>) {
-        self.init(unsortedSequence: [], comparator: comparator)
+        self.init(sortedArray: [], comparator: comparator)
     }
     
     public init<S: Sequence>(unsortedSequence: S, comparator: AnyComparator<Element>) where S.Element == Element {
@@ -134,37 +134,147 @@ extension SortedCollection: ExpressibleByArrayLiteral where Element: Comparable 
     
 }
 
-extension SortedCollection: BidirectionalCollection, RandomAccessCollection {
+extension SortedCollection: Sequence {
     
-    public typealias Buffer = Array<Element>
-    public typealias Index = Buffer.Index
-    public typealias Indices = Buffer.Indices
-    public typealias Iterator = Buffer.Iterator
-    public typealias IndexDistance = Int
-    public typealias SubSequence = SortedCollectionSlice<Element>
+    public func makeIterator() -> Array<Element>.Iterator {
+        return self.data.makeIterator()
+    }
     
-    public func index(after i: Index) -> Index {
+}
+
+extension SortedCollection: RandomAccessCollection {
+    
+    public var count: Int {
+        return self.data.count
+    }
+    
+    public var endIndex: Array<Element>.Index {
+        return self.data.endIndex
+    }
+    
+    public var first: Element? {
+        return self.data.first
+    }
+    
+    public var indices: Array<Element>.Indices {
+        return self.data.indices
+    }
+    
+    public var startIndex: Array<Element>.Index {
+        return self.data.startIndex
+    }
+    
+    public subscript(position: Array<Element>.Index) -> Element {
+        return self.data[position]
+    }
+    
+    public func index(after i: Array<Element>.Index) -> Array<Element>.Index {
         return self.data.index(after: i)
     }
     
-    public func index(before i: Index) -> Index {
+    public func index(before i: Array<Element>.Index) -> Array<Element>.Index {
         return self.data.index(before: i)
     }
     
-    public subscript(bounds: Range<Index>) -> SortedCollectionSlice<Element> {
+    public subscript(bounds: Range<Array<Element>.Index>) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
     
 }
 
-extension SortedCollection: SortedOperationsDefaults {
+extension SortedCollection: SortedOperations {
     
-    public init(data: [Element], comparator: AnyComparator<Element>) {
-        self.init(unsortedSequence: data, comparator: comparator)
+    public func anyLocation(of element: Element) -> Array<Element>.Index {
+        let index = self.insertIndex(for: element)
+        if index == self.endIndex {
+            return index
+        }
+        switch self.comparator.compare(lhs: self[index], rhs: element) {
+        case .orderedSame:
+            return index
+        default:
+            return self.endIndex
+        }
+    }
+    
+    public func contains(_ element: Element) -> Bool {
+        return self.anyLocation(of: element) != self.endIndex
+    }
+    
+    public func range(of element: Element) -> Range<Array<Element>.Index> {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return self.endIndex ..< self.endIndex
+        }
+        let startIndex = self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+        let endIndex = self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+        return startIndex ..< endIndex
+    }
+    
+    public func firstLocation(of element: Element) -> Array<Element>.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.startIndex ..< index].reversed().firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 }?.base ?? self.startIndex
+    }
+    
+    public func lastLocation(of element: Element) -> Array<Element>.Index? {
+        let index = self.anyLocation(of: element)
+        if index == self.endIndex {
+            return nil
+        }
+        return self[self.index(after: index) ..< self.endIndex].firstIndex { self.comparator.compare(lhs: $0, rhs: element).rawValue != 0 } ?? self.endIndex
+    }
+    
+    public func insertIndex(for element: Element) -> Array<Element>.Index {
+        var lower = 0
+        var upper = self.count - 1
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
+            case .orderedSame:
+                return currentIndex
+            case .orderedDescending:
+                upper = offset - 1
+            case .orderedAscending:
+                lower = offset + 1
+            }
+        }
+        return self.index(self.startIndex, offsetBy: lower)
+    }
+    
+    public func find(_ element: Element) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[self.range(of: element)], comparator: self.comparator)
+    }
+    
+    public func lessThan(_ element: Element) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[self.startIndex ..< (self.firstLocation(of: element) ?? self.startIndex)], comparator: self.comparator)
+    }
+    
+    public func greaterThan(_ element: Element) -> SortedCollectionSlice<Element> {
+        return SortedCollectionSlice(data: self.data[(self.lastLocation(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex], comparator: self.comparator)
+    }
+    
+    public mutating func insert(_ element: Element) {
+        self.data.insert(element, at: self.insertIndex(for: element))
     }
     
 }
 
-extension SortedCollection: Equatable where Element: Equatable {}
+extension SortedCollection: Equatable where Element: Equatable {
+    
+    public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
+        return lhs.data == rhs.data
+    }
+    
+}
 
-extension SortedCollection: Hashable where Element: Hashable {}
+extension SortedCollection: Hashable where Element: Hashable {
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.data)
+    }
+    
+}
