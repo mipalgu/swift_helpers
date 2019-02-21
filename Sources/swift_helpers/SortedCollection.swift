@@ -211,6 +211,10 @@ public struct SortedCollection<Element>: ComparatorContainer {
         self.init(sortedArray: sortedArray, comparator: AnyComparator(compare))
     }
     
+    public mutating func reserveCapacity(_ minimumCapacity: Int) {
+        self.data.reserveCapacity(minimumCapacity)
+    }
+    
 }
 
 extension SortedCollection where Element: Comparable {

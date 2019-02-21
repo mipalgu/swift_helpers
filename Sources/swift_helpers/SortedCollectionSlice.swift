@@ -73,6 +73,10 @@ public struct SortedCollectionSlice<Element>: ComparatorContainer {
         self.comparator = comparator
     }
     
+    public mutating func reserveCapacity(_ minimumCapacity: Int) {
+        self.data.reserveCapacity(minimumCapacity)
+    }
+    
 }
 
 extension SortedCollectionSlice: Sequence {
