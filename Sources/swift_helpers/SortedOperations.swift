@@ -78,7 +78,20 @@ public protocol SortedOperations: RandomAccessCollection {
     
     func lastIndex(of: Element) -> Index?
     
-    func search(for: Element) -> (Bool, Index)
+    /**
+     *  Search for an element that is ordered as being the same as `element`.
+     *
+     *  - Parameter element: The element that has the same ordering as the
+     *  elements that we are looking for.
+     *
+     *  - Returns: A tuple indicating whether an element with the same order as
+     *  `element` was found and the index of where that element was found within
+     *  the collection. If there was no element found with the same ordering as
+     *  `element` then the index returned indicates the position within the
+     *  collection where a new element with the same ordering of `element` may
+     *  be inserted.
+     */
+    func search(for element: Element) -> (Bool, Index)
     
     func find(_: Element) -> Self.SubSequence
     
