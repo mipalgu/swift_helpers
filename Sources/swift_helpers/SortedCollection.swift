@@ -93,6 +93,18 @@ public struct SortedCollection<Element>: ComparatorContainer {
     }
     
     /**
+     *  Create a new empty `SortedCollection`.
+     *
+     *  - Parameter compare: A function that compares two elements and returns a
+     *  `ComparisonResult` which will be used to sort the elements.
+     *
+     *  - Returns: A new empty `SortedCollection` sorted on `compare`.
+     */
+    public init(compare: @escaping (Element, Element) -> ComparisonResult) {
+        self.init(comparator: AnyComparator(compare))
+    }
+    
+    /**
      *  Create a new `SortedCollection` by copying elements from another
      *  unsorted `Sequence`.
      *
@@ -127,6 +139,30 @@ public struct SortedCollection<Element>: ComparatorContainer {
     
     /**
      *  Create a new `SortedCollection` by copying elements from another
+     *  unsorted `Sequence`.
+     *
+     *  When creating the `SortedCollection`, `unsortedSequence`'s elements will
+     *  be copied and sorted using `compare`.
+     *
+     *  - Parameter unsortedSequence: An unsorted sequence containing the new
+     *  `SortedCollection`'s elements.
+     *
+     *  - Parameter compare: A function that compares two element and return a
+     *  `ComparisonResult` which will be used to sort any future elements being
+     *  inserted into the collection as well as the elements within
+     *  `unsortedSequence`.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `unsortedSequence` sorted on `compare`.
+     *
+     *  - Complexity: O(n ^ 2)
+     */
+    public init<S: Sequence>(unsortedSequence: S, compare: @escaping (Element, Element) -> ComparisonResult) where S.Element == Element {
+        self.init(unsortedSequence: unsortedSequence, comparator: AnyComparator(compare))
+    }
+    
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
      *  sorted `Array`.
      *
      *  - Parameter sortedArray: A sorted `Array` containing the new
@@ -148,6 +184,31 @@ public struct SortedCollection<Element>: ComparatorContainer {
     public init(sortedArray: [Element], comparator: AnyComparator<Element>) {
         self.data = sortedArray
         self.comparator = comparator
+    }
+    
+    /**
+     *  Create a new `SortedCollection` by copying elements from another
+     *  sorted `Array`.
+     *
+     *  - Parameter sortedArray: A sorted `Array` containing the new
+     *  `SortedCollection`'s elements.
+     *
+     *  - Parameter compare: A function that compares two elements and returns a
+     *  `ComparisonResult` which will be used to sort any future elements being
+     *  inserted into the collection.
+     *
+     *  - Returns: A new `SortedCollection` containing the elements of
+     *  `sortedArray` in the order in which they are given.
+     *
+     *  - Complexity: O(n)
+     *
+     *  - Warning: It is important to ensure that the elements in
+     *  `sortedArray` are already sorted and conform to the sorting method
+     *  provided by `compare`. If they are not then the behaviour of the
+     *  `SortedCollection` is undefined.
+     */
+    public init(sortedArray: [Element], compare: @escaping (Element, Element) -> ComparisonResult) {
+        self.init(sortedArray: sortedArray, comparator: AnyComparator(compare))
     }
     
 }
@@ -190,18 +251,15 @@ extension SortedCollection where Element: Comparable {
      *  then the behaviour of the `SortedCollection` is undefined.
      */
     public init(sortedArray: [Element]) {
-        self.init(
-            sortedArray: sortedArray,
-            comparator: AnyComparator {
-                if $0 < $1 {
-                    return .orderedAscending
-                }
-                if $0 > $1 {
-                    return .orderedDescending
-                }
-                return .orderedSame
+        self.init(sortedArray: sortedArray) {
+            if $0 < $1 {
+                return .orderedAscending
             }
-        )
+            if $0 > $1 {
+                return .orderedDescending
+            }
+            return .orderedSame
+        }
     }
     
     public init() {
