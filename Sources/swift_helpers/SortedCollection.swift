@@ -74,9 +74,10 @@ import Foundation
  *  the need for elements to be `Comparable`. The advantage is that a
  *  `Comparator` is able to change the way in which elements are ordered.
  */
-public struct SortedCollection<Element> {
+public struct SortedCollection<Element>: ComparatorContainer {
     
-    fileprivate let comparator: AnyComparator<Element>
+    public let comparator: AnyComparator<Element>
+    
     fileprivate var data: [Element]
     
     /**
@@ -274,26 +275,12 @@ extension SortedCollection: RandomAccessCollection {
 
 extension SortedCollection: SortedOperations {
     
-    public func search(for element: Element) -> (Bool, Array<Element>.Index) {
-        var lower = 0
-        var upper = self.count - 1
-        while lower <= upper {
-            let offset = (lower + upper) / 2
-            let currentIndex = self.index(self.startIndex, offsetBy: offset)
-            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
-            case .orderedSame:
-                return (true, currentIndex)
-            case .orderedDescending:
-                upper = offset - 1
-            case .orderedAscending:
-                lower = offset + 1
-            }
-        }
-        return (false, self.index(self.startIndex, offsetBy: lower))
-    }
-    
     public mutating func insert(_ element: Element) {
         self.data.insert(element, at: self.search(for: element).1)
+    }
+    
+    public mutating func remove(at index: Array<Element>.Index) -> Element {
+        return self.data.remove(at: index)
     }
     
     public mutating func removeSubrange(_ bounds: Range<Array<Element>.Index>) {

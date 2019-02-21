@@ -62,9 +62,10 @@ import Foundation
 #endif
 #endif
 
-public struct SortedCollectionSlice<Element> {
+public struct SortedCollectionSlice<Element>: ComparatorContainer {
     
-    fileprivate let comparator: AnyComparator<Element>
+    public let comparator: AnyComparator<Element>
+    
     fileprivate var data: Array<Element>.SubSequence
     
     internal init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
@@ -125,26 +126,12 @@ extension SortedCollectionSlice: RandomAccessCollection {
 
 extension SortedCollectionSlice: SortedOperations {
     
-    public func search(for element: Element) -> (Bool, Array<Element>.SubSequence.Index) {
-        var lower = 0
-        var upper = self.count - 1
-        while lower <= upper {
-            let offset = (lower + upper) / 2
-            let currentIndex = self.index(self.startIndex, offsetBy: offset)
-            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
-            case .orderedSame:
-                return (true, currentIndex)
-            case .orderedDescending:
-                upper = offset - 1
-            case .orderedAscending:
-                lower = offset + 1
-            }
-        }
-        return (false, self.index(self.startIndex, offsetBy: lower))
-    }
-    
     public mutating func insert(_ element: Element) {
         self.data.insert(element, at: self.search(for: element).1)
+    }
+    
+    public mutating func remove(at index: Array<Element>.SubSequence.Index) -> Element {
+        return self.data.remove(at: index)
     }
     
     public mutating func removeSubrange(_ bounds: Range<Array<Element>.SubSequence.Index>) {

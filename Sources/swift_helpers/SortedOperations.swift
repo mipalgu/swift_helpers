@@ -56,7 +56,7 @@
  *
  */
 
-public protocol SortedOperations: RandomAccessCollection {
+public protocol SortedOperations: Collection {
     
     func anyIndex(of: Element) -> Index?
     
@@ -96,7 +96,7 @@ public protocol SortedOperations: RandomAccessCollection {
     
 }
 
-extension SortedOperations where Self.SubSequence: SortedOperations {
+extension SortedOperations {
     
     @inline(__always)
     public func anyIndex(of element: Element) -> Self.Index? {
@@ -115,22 +115,6 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
             return self.endIndex ..< self.endIndex
         }
         return startIndex ..< self.index(after: endIndex)
-    }
-    
-    @inline(__always)
-    public func firstIndex(of element: Element) -> Self.Index? {
-        guard let index = self.anyIndex(of: element) else {
-            return nil
-        }
-        return self[self.startIndex ..< index].firstIndex(of: element) ?? index
-    }
-    
-    @inline(__always)
-    public func lastIndex(of element: Element) -> Self.Index? {
-        guard let index = self.anyIndex(of: element) else {
-            return nil
-        }
-        return self[self.index(after: index) ..< self.endIndex].lastIndex(of: element) ?? index
     }
     
     @inline(__always)
@@ -156,13 +140,6 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
     @inline(__always)
     public func right(ofAndIncluding element: Element) -> Self.SubSequence {
         return self[(self.firstIndex(of: element) ?? self.endIndex) ..< self.endIndex]
-    }
-    
-    @inline(__always)
-    public mutating func remove(at index: Self.Index) -> Element {
-        let element = self[index]
-        self.removeSubrange(index ..< self.index(after: index))
-        return element
     }
     
     @inline(__always)
@@ -192,6 +169,48 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
     @inline(__always)
     public mutating func removeAll(_ element: Element) {
         self.removeSubrange(self.range(of: element))
+    }
+    
+}
+
+extension SortedOperations where Self: RandomAccessCollection, Self.SubSequence: SortedOperations {
+    
+    @inline(__always)
+    public func firstIndex(of element: Element) -> Self.Index? {
+        guard let index = self.anyIndex(of: element) else {
+            return nil
+        }
+        return self[self.startIndex ..< index].firstIndex(of: element) ?? index
+    }
+    
+    @inline(__always)
+    public func lastIndex(of element: Element) -> Self.Index? {
+        guard let index = self.anyIndex(of: element) else {
+            return nil
+        }
+        return self[self.index(after: index) ..< self.endIndex].lastIndex(of: element) ?? index
+    }
+    
+}
+
+extension SortedOperations where Self: RandomAccessCollection, Self: ComparatorContainer {
+    
+    public func search(for element: Element) -> (Bool, Self.Index) {
+        var lower = 0
+        var upper = self.count - 1
+        while lower <= upper {
+            let offset = (lower + upper) / 2
+            let currentIndex = self.index(self.startIndex, offsetBy: offset)
+            switch self.comparator.compare(lhs: self[currentIndex], rhs: element) {
+            case .orderedSame:
+                return (true, currentIndex)
+            case .orderedDescending:
+                upper = offset - 1
+            case .orderedAscending:
+                lower = offset + 1
+            }
+        }
+        return (false, self.index(self.startIndex, offsetBy: lower))
     }
     
 }
