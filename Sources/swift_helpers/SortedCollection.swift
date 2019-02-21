@@ -71,8 +71,13 @@ import Foundation
  *  duplicate elements but also allows quick lookups.
  *
  *  A `SortedCollection` uses a `Comparator` to order the elements. This removes
- *  the need for elements to be `Comparable`. The advantage is that a
- *  `Comparator` is able to change the way in which elements are ordered.
+ *  the need for elements to be `Comparable`. For example, a `SortedCollection`
+ *  allows the storing of tuples which are not able to conform to protocols.
+ *
+ *  If the elements within the collection are `Comparable`, then the
+ *  `SortedCollection` provides ways to initialise the collection without a
+ *  `Comparator`. This therefore sorts the underlying elements in ascending
+ *  order and removes the burden of providing a `Comparator`.
  */
 public struct SortedCollection<Element>: ComparatorContainer {
     
