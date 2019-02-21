@@ -56,9 +56,19 @@
  *
  */
 
-public protocol SortedOperations: Collection {
+public protocol SortedOperations: RandomAccessCollection {
     
     func anyIndex(of: Element) -> Index?
+    
+    func count(of: Element) -> Int
+    
+    func count(leftOf: Element) -> Int
+    
+    func count(rightOf: Element) -> Int
+    
+    func count(leftOfAndIncluding: Element) -> Int
+    
+    func count(rightOfAndIncluding: Element) -> Int
     
     func contains(_ element: Element) -> Bool
     
@@ -102,6 +112,31 @@ extension SortedOperations {
     public func anyIndex(of element: Element) -> Self.Index? {
         let (found, index) = self.search(for: element)
         return found ? index : nil
+    }
+    
+    @inline(__always)
+    public func count(of element: Element) -> Int {
+        return self.find(element).count
+    }
+    
+    @inline(__always)
+    public func count(leftOf element: Element) -> Int {
+        return self.left(of: element).count
+    }
+    
+    @inline(__always)
+    public func count(rightOf element: Element) -> Int {
+        return self.right(of: element).count
+    }
+    
+    @inline(__always)
+    public func count(leftOfAndIncluding element: Element) -> Int {
+        return self.left(ofAndIncluding: element).count
+    }
+    
+    @inline(__always)
+    public func count(rightOfAndIncluding element: Element) -> Int {
+        return self.right(ofAndIncluding: element).count
     }
     
     @inline(__always)
@@ -173,7 +208,7 @@ extension SortedOperations {
     
 }
 
-extension SortedOperations where Self: RandomAccessCollection, Self.SubSequence: SortedOperations {
+extension SortedOperations where Self.SubSequence: SortedOperations {
     
     @inline(__always)
     public func firstIndex(of element: Element) -> Self.Index? {
@@ -193,7 +228,7 @@ extension SortedOperations where Self: RandomAccessCollection, Self.SubSequence:
     
 }
 
-extension SortedOperations where Self: RandomAccessCollection, Self: ComparatorContainer {
+extension SortedOperations where Self: ComparatorContainer {
     
     public func search(for element: Element) -> (Bool, Self.Index) {
         var lower = 0
