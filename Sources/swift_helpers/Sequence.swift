@@ -62,7 +62,7 @@ import Foundation
 #endif
 #endif
 
-extension Sequence where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
+extension Collection where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
 
     public func trim(
         _ shouldTrim: (Self.Iterator.Element) throws -> Bool
@@ -73,7 +73,7 @@ extension Sequence where Self.SubSequence: Sequence, Self.SubSequence.Iterator.E
 
 }
 
-extension Sequence where
+extension Collection where
     Self.SubSequence: Sequence,
     Self.SubSequence.Iterator.Element == Self.Iterator.Element,
     Self.Iterator.Element: Equatable
@@ -87,7 +87,7 @@ extension Sequence where
 
 }
 
-extension Sequence where
+extension Collection where
     Self.SubSequence: Sequence,
     Self.SubSequence.Iterator.Element == Self.Iterator.Element,
     Self.SubSequence.SubSequence: Sequence,
