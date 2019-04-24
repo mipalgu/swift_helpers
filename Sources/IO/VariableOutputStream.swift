@@ -68,5 +68,4 @@ public class VariableOutputStream: TextOutputStream {
         print(string, to: &self.str.pointee)
     }
 
-
 }

@@ -143,7 +143,7 @@ public final class FileHelpers {
     public func overwriteDirectory(_ dir: URL, ignoringSubFiles subfiles: [URL]) -> URL? {
         guard false == subfiles.isEmpty, let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
             return self.overwriteDirectory(dir)
-        } 
+        }
         let deleteFiles = contents.lazy.map { URL(fileURLWithPath: $0) }.filter { subfile in
             nil == subfiles.first {
                 $0.absoluteURL == subfile.absoluteURL
@@ -153,6 +153,7 @@ public final class FileHelpers {
         return dir
     }
 
+    //swiftlint:disable:next line_length
     public func overwriteSubDirectory(_ subdir: String, inDirectory dir: URL, ignoringSubFiles subfiles: [URL] = []) -> URL? {
         let fullPath = dir.appendingPathComponent(subdir, isDirectory: true)
         return self.overwriteDirectory(fullPath, ignoringSubFiles: subfiles)

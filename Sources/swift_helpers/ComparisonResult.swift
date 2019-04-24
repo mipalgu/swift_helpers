@@ -59,11 +59,11 @@
 #if NO_FOUNDATION || !canImport(Foundation)
 
 public enum ComparisonResult: Int {
-    
+
     case orderedAscending = -1
     case orderedSame = 0
     case orderedDescending = 1
-    
+
 }
 
 #endif

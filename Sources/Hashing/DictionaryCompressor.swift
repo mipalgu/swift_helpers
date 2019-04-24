@@ -61,11 +61,11 @@ public struct DictionaryCompressor: Compressor {
     fileprivate var ids: [String: Int]
 
     public init(fromTrainingData dictionary: [String: Any]) {
-        var ids = Dictionary<String, Int>(minimumCapacity: dictionary.count)
+        var ids = [String: Int](minimumCapacity: dictionary.count)
         var i = 0
         func add(_ dictionary: [String: Any], pre: String?) {
             let keys = dictionary.keys.sorted()
-            keys.forEach { key in 
+            keys.forEach { key in
                 let newKey = (pre.map { $0 + "." } ?? "") + key
                 ids[newKey] = i
                 i += 1

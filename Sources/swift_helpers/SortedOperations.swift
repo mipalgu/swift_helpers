@@ -57,27 +57,27 @@
  */
 
 public protocol SortedOperations: RandomAccessCollection {
-    
+
     func anyIndex(of: Element) -> Index?
-    
+
     func count(of: Element) -> Int
-    
+
     func count(leftOf: Element) -> Int
-    
+
     func count(rightOf: Element) -> Int
-    
+
     func count(leftOfAndIncluding: Element) -> Int
-    
+
     func count(rightOfAndIncluding: Element) -> Int
-    
+
     func contains(_ element: Element) -> Bool
-    
+
     func range(of: Element) -> Range<Index>
-    
+
     func firstIndex(of: Element) -> Index?
-    
+
     func lastIndex(of: Element) -> Index?
-    
+
     /**
      *  Search for an element that is ordered as being the same as `element`.
      *
@@ -92,71 +92,71 @@ public protocol SortedOperations: RandomAccessCollection {
      *  be inserted.
      */
     func search(for element: Element) -> (Bool, Index)
-    
+
     func find(_: Element) -> Self.SubSequence
-    
+
     func left(of: Element) -> Self.SubSequence
-    
+
     func left(ofAndIncluding: Element) -> Self.SubSequence
-    
+
     func right(of: Element) -> Self.SubSequence
-    
+
     func right(ofAndIncluding: Element) -> Self.SubSequence
-    
+
     mutating func insert(_: Element)
-    
+
     mutating func remove(at: Self.Index) -> Element
-    
+
     mutating func removeSubrange(_: Range<Self.Index>)
-    
+
     mutating func removeAny(_: Element)
-    
+
     mutating func removeFirst(_: Element)
-    
+
     mutating func removeLast(_: Element)
-    
+
     mutating func removeAll(_: Element)
-    
+
 }
 
 extension SortedOperations {
-    
+
     @inline(__always)
     public func anyIndex(of element: Element) -> Self.Index? {
         let (found, index) = self.search(for: element)
         return found ? index : nil
     }
-    
+
     @inline(__always)
     public func count(of element: Element) -> Int {
         return self.find(element).count
     }
-    
+
     @inline(__always)
     public func count(leftOf element: Element) -> Int {
         return self.left(of: element).count
     }
-    
+
     @inline(__always)
     public func count(rightOf element: Element) -> Int {
         return self.right(of: element).count
     }
-    
+
     @inline(__always)
     public func count(leftOfAndIncluding element: Element) -> Int {
         return self.left(ofAndIncluding: element).count
     }
-    
+
     @inline(__always)
     public func count(rightOfAndIncluding element: Element) -> Int {
         return self.right(ofAndIncluding: element).count
     }
-    
+
     @inline(__always)
     public func contains(_ element: Element) -> Bool {
         return self.anyIndex(of: element) != nil
     }
-    
+
     @inline(__always)
     public func range(of element: Element) -> Range<Self.Index> {
         guard let startIndex = self.firstIndex(of: element), let endIndex = self.lastIndex(of: element) else {
@@ -164,32 +164,32 @@ extension SortedOperations {
         }
         return startIndex ..< self.index(after: endIndex)
     }
-    
+
     @inline(__always)
     public func find(_ element: Element) -> Self.SubSequence {
         return self[self.range(of: element)]
     }
-    
+
     @inline(__always)
     public func left(of element: Element) -> Self.SubSequence {
         return self[self.startIndex ..< (self.firstIndex(of: element) ?? self.startIndex)]
     }
-    
+
     @inline(__always)
     public func left(ofAndIncluding element: Element) -> Self.SubSequence {
         return self[self.startIndex ..< (self.lastIndex(of: element).map { self.index(after: $0) } ?? self.startIndex)]
     }
-    
+
     @inline(__always)
     public func right(of element: Element) -> Self.SubSequence {
         return self[(self.lastIndex(of: element).map { self.index(after: $0) } ?? self.endIndex) ..< self.endIndex]
     }
-    
+
     @inline(__always)
     public func right(ofAndIncluding element: Element) -> Self.SubSequence {
         return self[(self.firstIndex(of: element) ?? self.endIndex) ..< self.endIndex]
     }
-    
+
     @inline(__always)
     public mutating func removeAny(_ element: Element) {
         guard let index = self.anyIndex(of: element) else {
@@ -197,7 +197,7 @@ extension SortedOperations {
         }
         _ = self.remove(at: index)
     }
-    
+
     @inline(__always)
     public mutating func removeFirst(_ element: Element) {
         guard let index = self.firstIndex(of: element) else {
@@ -205,7 +205,7 @@ extension SortedOperations {
         }
         _ = self.remove(at: index)
     }
-    
+
     @inline(__always)
     public mutating func removeLast(_ element: Element) {
         guard let index = self.lastIndex(of: element) else {
@@ -213,16 +213,16 @@ extension SortedOperations {
         }
         _ = self.remove(at: index)
     }
-    
+
     @inline(__always)
     public mutating func removeAll(_ element: Element) {
         self.removeSubrange(self.range(of: element))
     }
-    
+
 }
 
 extension SortedOperations where Self.SubSequence: SortedOperations {
-    
+
     @inline(__always)
     public func firstIndex(of element: Element) -> Self.Index? {
         guard let index = self.anyIndex(of: element) else {
@@ -230,7 +230,7 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
         }
         return self[self.startIndex ..< index].firstIndex(of: element) ?? index
     }
-    
+
     @inline(__always)
     public func lastIndex(of element: Element) -> Self.Index? {
         guard let index = self.anyIndex(of: element) else {
@@ -238,11 +238,11 @@ extension SortedOperations where Self.SubSequence: SortedOperations {
         }
         return self[self.index(after: index) ..< self.endIndex].lastIndex(of: element) ?? index
     }
-    
+
 }
 
 extension SortedOperations where Self: ComparatorContainer {
-    
+
     public func search(for element: Element) -> (Bool, Self.Index) {
         var lower = 0
         var upper = self.count - 1
@@ -260,5 +260,5 @@ extension SortedOperations where Self: ComparatorContainer {
         }
         return (false, self.index(self.startIndex, offsetBy: lower))
     }
-    
+
 }

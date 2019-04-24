@@ -160,7 +160,7 @@ extension HashTable: CustomReflectable {
 extension HashTable: Decodable where T: Decodable {
 
     public init(from decoder: Decoder) throws {
-        self.table = try Dictionary<Int, T>(from: decoder)
+        self.table = try [Int: T](from: decoder)
     }
 
 }
@@ -174,8 +174,8 @@ extension HashTable: Encodable where T: Encodable {
 }
 
 extension HashTable: Equatable {
-    
-    public static func ==(lhs: HashTable<T>, rhs: HashTable<T>) -> Bool {
+
+    public static func == (lhs: HashTable<T>, rhs: HashTable<T>) -> Bool {
         return lhs.table == rhs.table
     }
 }

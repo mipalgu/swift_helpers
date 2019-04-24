@@ -126,17 +126,19 @@ extension Sequence {
 }
 
 extension Sequence {
-    
-    public func sortedCollection(_ compare: @escaping (Self.Iterator.Element, Self.Iterator.Element) -> ComparisonResult) -> SortedCollection<Self.Iterator.Element> {
+
+    public func sortedCollection(
+        _ compare: @escaping (Self.Iterator.Element, Self.Iterator.Element) -> ComparisonResult
+    ) -> SortedCollection<Self.Iterator.Element> {
         return SortedCollection(unsortedSequence: self, comparator: AnyComparator(compare))
     }
-    
+
 }
 
 extension Sequence where Self.Iterator.Element: Comparable {
-    
+
     public func sortedCollection() -> SortedCollection<Self.Iterator.Element> {
         return SortedCollection(unsortedSequence: self)
     }
-    
+
 }

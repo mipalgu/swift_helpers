@@ -63,99 +63,98 @@ import Foundation
 #endif
 
 public struct SortedCollectionSlice<Element>: ComparatorContainer {
-    
+
     public let comparator: AnyComparator<Element>
-    
+
     fileprivate var data: Array<Element>.SubSequence
-    
+
     internal init(data: Array<Element>.SubSequence, comparator: AnyComparator<Element>) {
         self.data = data
         self.comparator = comparator
     }
-    
+
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
         self.data.reserveCapacity(minimumCapacity)
     }
-    
+
 }
 
 extension SortedCollectionSlice: Sequence {
-    
+
     public func makeIterator() -> Array<Element>.SubSequence.Iterator {
         return self.data.makeIterator()
     }
-    
+
 }
 
-
 extension SortedCollectionSlice: RandomAccessCollection {
-    
+
     public var count: Int {
         return self.data.count
     }
-    
+
     public var endIndex: Array<Element>.SubSequence.Index {
         return self.data.endIndex
     }
-    
+
     public var first: Element? {
         return self.data.first
     }
-    
+
     public var indices: Array<Element>.SubSequence.Indices {
         return self.data.indices
     }
-    
+
     public var startIndex: Array<Element>.SubSequence.Index {
         return self.data.startIndex
     }
-    
+
     public subscript(position: Array<Element>.SubSequence.Index) -> Element {
         return self.data[position]
     }
-    
+
     public func index(after i: Array<Element>.SubSequence.Index) -> Array<Element>.SubSequence.Index {
         return self.data.index(after: i)
     }
-    
+
     public func index(before i: Array<Element>.SubSequence.Index) -> Array<Element>.SubSequence.Index {
         return self.data.index(before: i)
     }
-    
+
     public subscript(bounds: Range<Array<Element>.SubSequence.Index>) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
-    
+
 }
 
 extension SortedCollectionSlice: SortedOperations {
-    
+
     public mutating func insert(_ element: Element) {
         self.data.insert(element, at: self.search(for: element).1)
     }
-    
+
     public mutating func remove(at index: Array<Element>.SubSequence.Index) -> Element {
         return self.data.remove(at: index)
     }
-    
+
     public mutating func removeSubrange(_ bounds: Range<Array<Element>.SubSequence.Index>) {
         self.data.removeSubrange(bounds)
     }
-    
+
 }
 
 extension SortedCollectionSlice: Equatable where Element: Equatable {
-    
+
     public static func == (lhs: SortedCollectionSlice<Element>, rhs: SortedCollectionSlice<Element>) -> Bool {
         return lhs.data == rhs.data
     }
-    
+
 }
 
 extension SortedCollectionSlice: Hashable where Element: Hashable {
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.data)
     }
-    
+
 }

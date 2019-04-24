@@ -92,7 +92,6 @@ public func >>- <T, U, S: Sequence>(a: S, f: (T) -> [U]) -> [U] where
 public func -<< <T, U, S: Sequence>(f: (T) -> [U], a: S) -> [U] where
     S.Iterator.Element == T
 {
-    
   return a.flatMap(f)
 }
 

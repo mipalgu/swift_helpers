@@ -43,7 +43,6 @@ public func -<< <T, U>(f: (T) -> U?, a: [T]) -> [U] {
 
 }
 
-
 /**
  *  Perform a monadic bind.
  *

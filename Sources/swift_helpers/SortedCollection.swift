@@ -80,11 +80,11 @@ import Foundation
  *  order and removes the burden of providing a `Comparator`.
  */
 public struct SortedCollection<Element>: ComparatorContainer {
-    
+
     public let comparator: AnyComparator<Element>
-    
+
     fileprivate var data: [Element]
-    
+
     /**
      *  Create a new empty `SortedCollection`.
      *
@@ -96,7 +96,7 @@ public struct SortedCollection<Element>: ComparatorContainer {
     public init(comparator: AnyComparator<Element>) {
         self.init(sortedArray: [], comparator: comparator)
     }
-    
+
     /**
      *  Create a new empty `SortedCollection`.
      *
@@ -108,7 +108,7 @@ public struct SortedCollection<Element>: ComparatorContainer {
     public init(compare: @escaping (Element, Element) -> ComparisonResult) {
         self.init(comparator: AnyComparator(compare))
     }
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  unsorted `Sequence`.
@@ -141,7 +141,7 @@ public struct SortedCollection<Element>: ComparatorContainer {
             comparator: comparator
         )
     }
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  unsorted `Sequence`.
@@ -162,10 +162,13 @@ public struct SortedCollection<Element>: ComparatorContainer {
      *
      *  - Complexity: O(n ^ 2)
      */
-    public init<S: Sequence>(unsortedSequence: S, compare: @escaping (Element, Element) -> ComparisonResult) where S.Element == Element {
+    public init<S: Sequence>(
+        unsortedSequence: S,
+        compare: @escaping (Element, Element) -> ComparisonResult
+    ) where S.Element == Element {
         self.init(unsortedSequence: unsortedSequence, comparator: AnyComparator(compare))
     }
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  sorted `Array`.
@@ -190,7 +193,7 @@ public struct SortedCollection<Element>: ComparatorContainer {
         self.data = sortedArray
         self.comparator = comparator
     }
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  sorted `Array`.
@@ -215,15 +218,15 @@ public struct SortedCollection<Element>: ComparatorContainer {
     public init(sortedArray: [Element], compare: @escaping (Element, Element) -> ComparisonResult) {
         self.init(sortedArray: sortedArray, comparator: AnyComparator(compare))
     }
-    
+
     public mutating func reserveCapacity(_ minimumCapacity: Int) {
         self.data.reserveCapacity(minimumCapacity)
     }
-    
+
 }
 
 extension SortedCollection where Element: Comparable {
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  unsorted `Sequence`.
@@ -242,7 +245,7 @@ extension SortedCollection where Element: Comparable {
     public init<S: Sequence>(unsortedSequence: S) where S.Element == Element {
         self.init(sortedArray: unsortedSequence.sorted())
     }
-    
+
     /**
      *  Create a new `SortedCollection` by copying elements from another
      *  sorted `Array`.
@@ -270,104 +273,104 @@ extension SortedCollection where Element: Comparable {
             return .orderedSame
         }
     }
-    
+
     public init() {
         self.init(sortedArray: [])
     }
-    
+
     public init(minimumCapacity: Int) {
         self.init()
         self.data.reserveCapacity(minimumCapacity)
     }
-    
+
 }
 
 extension SortedCollection: ExpressibleByArrayLiteral where Element: Comparable {
-    
+
     public typealias ArrayLiteralElement = Element
-    
+
     public init(arrayLiteral elements: Element...) {
         self.init(unsortedSequence: elements)
     }
-    
+
 }
 
 extension SortedCollection: Sequence {
-    
+
     public func makeIterator() -> Array<Element>.Iterator {
         return self.data.makeIterator()
     }
-    
+
 }
 
 extension SortedCollection: RandomAccessCollection {
-    
+
     public var count: Int {
         return self.data.count
     }
-    
+
     public var endIndex: Array<Element>.Index {
         return self.data.endIndex
     }
-    
+
     public var first: Element? {
         return self.data.first
     }
-    
+
     public var indices: Array<Element>.Indices {
         return self.data.indices
     }
-    
+
     public var startIndex: Array<Element>.Index {
         return self.data.startIndex
     }
-    
+
     public subscript(position: Array<Element>.Index) -> Element {
         return self.data[position]
     }
-    
+
     public func index(after i: Array<Element>.Index) -> Array<Element>.Index {
         return self.data.index(after: i)
     }
-    
+
     public func index(before i: Array<Element>.Index) -> Array<Element>.Index {
         return self.data.index(before: i)
     }
-    
+
     public subscript(bounds: Range<Array<Element>.Index>) -> SortedCollectionSlice<Element> {
         return SortedCollectionSlice(data: self.data[bounds], comparator: self.comparator)
     }
-    
+
 }
 
 extension SortedCollection: SortedOperations {
-    
+
     public mutating func insert(_ element: Element) {
         self.data.insert(element, at: self.search(for: element).1)
     }
-    
+
     public mutating func remove(at index: Array<Element>.Index) -> Element {
         return self.data.remove(at: index)
     }
-    
+
     public mutating func removeSubrange(_ bounds: Range<Array<Element>.Index>) {
         self.data.removeSubrange(bounds)
     }
-    
+
 }
 
 extension SortedCollection: Equatable where Element: Equatable {
-    
+
     public static func == (lhs: SortedCollection<Element>, rhs: SortedCollection<Element>) -> Bool {
         return lhs.data == rhs.data
     }
-    
+
 }
 
 extension SortedCollection: Hashable where Element: Hashable {
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(self.data)
     }
-    
+
 }

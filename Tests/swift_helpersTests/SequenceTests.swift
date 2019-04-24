@@ -60,7 +60,7 @@
 import XCTest
 
 public class SequenceTests: XCTestCase {
-    
+
     public static var allTests: [(String, (SequenceTests) -> () throws -> Void)] {
         return [
             ("test_binarySearchReturnsNoElementsWhenNoneAreFound", test_binarySearchReturnsNoElementsWhenNoneAreFound),
@@ -77,7 +77,7 @@ public class SequenceTests: XCTestCase {
             ("test_filterPerformanceMissing", test_filterPerformanceMissing)
         ]
     }
-    
+
     fileprivate func createArray(count: Int) -> SortedCollection<Int> {
         let ones = Array(repeating: 1, count: count)
         let twos = Array(repeating: 2, count: count)
@@ -86,19 +86,19 @@ public class SequenceTests: XCTestCase {
         let fives = Array(repeating: 5, count: count)
         return SortedCollection(sortedArray: ones + twos + threes + fours + fives)
     }
-    
+
     public func test_binarySearchReturnsNoElementsWhenNoneAreFound() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results = arr.find(0)
         XCTAssertEqual([], Array(results))
     }
-    
+
     public func test_binarySearchReturnsElementInTheMiddle() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results = arr.find(3)
         XCTAssertEqual([3, 3], Array(results))
     }
-    
+
     public func test_binarySearchReturnsSingleElements() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results2 = arr.find(2)
@@ -106,31 +106,31 @@ public class SequenceTests: XCTestCase {
         let results4 = arr.find(4)
         XCTAssertEqual([4], Array(results4))
     }
-    
+
     public func test_binarySearchReturnsAllElementsAtTheFront() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results = arr.find(1)
         XCTAssertEqual([1, 1, 1, 1], Array(results))
     }
-    
+
     public func test_binarySearchReturnsAllElementsAtTheEnd() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
         let results = arr.find(5)
         XCTAssertEqual([5, 5, 5, 5, 5], Array(results))
     }
-    
+
     public func test_binarySearchReturnsTheEntireCollection() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1]
         let results = arr.find(1)
         XCTAssertEqual([1, 1, 1, 1], Array(results))
     }
-    
+
     public func test_binarySearchReturnsEmptyCollection() {
         let arr: SortedCollection<Int> = []
         let results = arr.find(0)
         XCTAssertEqual([], Array(results))
     }
-    
+
     public func test_insertingIntoSortedCollection() {
         var collection: SortedCollection<Int> = []
         XCTAssertEqual([], Array(collection))
@@ -145,7 +145,7 @@ public class SequenceTests: XCTestCase {
         collection.insert(-1)
         XCTAssertEqual([-1, 0, 1, 2, 2], Array(collection))
     }
-    
+
     public func test_performance() {
         let arr = self.createArray(count: 100000)
         measure {
@@ -156,7 +156,7 @@ public class SequenceTests: XCTestCase {
             _ = arr.find(5)
         }
     }
-    
+
     public func test_filterPerformance() {
         let arr = self.createArray(count: 100000)
         measure {
@@ -167,20 +167,19 @@ public class SequenceTests: XCTestCase {
             _ = arr.filter { $0 == 5 }
         }
     }
-    
+
     public func test_performanceMissing() {
         let arr = self.createArray(count: 1000000)
         measure {
             _ = arr.find(0)
         }
     }
-    
+
     public func test_filterPerformanceMissing() {
         let arr = self.createArray(count: 1000000)
         measure {
             _ = arr.filter { $0 == 0 }
         }
     }
-    
-}
 
+}

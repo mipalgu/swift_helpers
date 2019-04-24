@@ -63,19 +63,19 @@ import Foundation
 #endif
 
 public struct AnyComparator<Element>: Comparator {
-    
+
     fileprivate var _compare: (Element, Element) -> ComparisonResult
-    
+
     public init<C: Comparator>(_ base: C) where C.Element == Element {
         self._compare = { base.compare(lhs: $0, rhs: $1) }
     }
-    
+
     public init(_ compare: @escaping (Element, Element) -> ComparisonResult) {
         self._compare = compare
     }
-    
+
     public func compare(lhs: Element, rhs: Element) -> ComparisonResult {
         return self._compare(lhs, rhs)
     }
-    
+
 }
