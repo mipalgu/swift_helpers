@@ -81,7 +81,8 @@ public class StringHelpersTests: XCTestCase {
             ("test_toSnakeCaseWorksWithACapitalAfterANumber", test_toSnakeCaseWorksWithACapitalAfterANumber),
             ("test_toSnakeCaseDoesNotModifySnakeCase", test_toSnakeCaseDoesNotModifySnakeCase),
             ("test_toSnakeCaseWorksWithCamelCase", test_toSnakeCaseWorksWithCamelCase),
-            ("test_toSnakeCaseWorksWithMultipleNumbers", test_toSnakeCaseWorksWithMultipleNumbers)
+            ("test_toSnakeCaseWorksWithMultipleNumbers", test_toSnakeCaseWorksWithMultipleNumbers),
+            ("test_cIndentDoesNotIndentLinesWithHash", test_cIndentDoesNotIndentLinesWithHash)
         ]
     }
 
@@ -190,6 +191,23 @@ public class StringHelpersTests: XCTestCase {
     public func test_toSnakeCaseWorksWithMultipleNumbers() {
         let snake = "esp8266_pin_toggle"
         XCTAssertEqual("esp8266_pin_toggle", self.helpers.toSnakeCase(snake))
+    }
+
+    public func test_cIndentDoesNotIndentLinesWithHash() {
+        let lines = """
+            1
+            # 2
+            3
+                # 4
+            """
+        let indented = self.helpers.cIndent(lines)
+        let expected = """
+                1
+            # 2
+                3
+            # 4
+            """
+        XCTAssertEqual(indented, expected)
     }
 
 }

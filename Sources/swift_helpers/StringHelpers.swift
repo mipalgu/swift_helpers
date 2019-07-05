@@ -78,6 +78,21 @@ public final class StringHelpers {
             return indent + $0
         }.combine("") { $0 + "\n" + $1 }
     }
+
+    public func cIndent(_ str: String, _ level: Int = 1) -> String {
+        let indent = String([Character](repeating: " ", count: 4 * level))
+        let lines = str.components(separatedBy: CharacterSet.newlines)
+        return lines.lazy.map {
+            let trim = $0.trimmingCharacters(in: .whitespaces)
+            if trim.isEmpty {
+                return ""
+            }
+            if trim.first == "#" {
+                return trim
+            }
+            return indent + $0
+        }.combine("") { $0 + "\n" + $1 }
+    }
 #endif
 #endif
 
