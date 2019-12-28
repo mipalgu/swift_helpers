@@ -40,7 +40,7 @@ let package = Package(
             dependencies: []),
         .target(
             name: "IO",
-            dependencies: []),
+            dependencies: ["swift_helpers"]),
         .target(
             name: "Hashing",
             dependencies: []),

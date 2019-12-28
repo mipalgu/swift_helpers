@@ -56,6 +56,12 @@
  *
  */
 
+import swift_helpers
+
+#if !NO_FOUNDATION && canImport(Foundation)
+import Foundation
+#endif
+
 /**
  *  A printer that formats text so that it can be printed on the command line.
  */
@@ -84,8 +90,10 @@ public class CommandLinePrinter<
      *  - Parameter str: The error.
      */
     public override func error(str: String) {
+        let pre = "error: "
+        let str = self.space(str, length: pre.count)
         print(
-            "\u{001B}[1;31merror: \u{001B}[0m\(str)",
+            "\u{001B}[1;31m\(pre)\u{001B}[0m\(str)",
             terminator: "\n",
             to: &super.errorStream
         )
@@ -97,11 +105,25 @@ public class CommandLinePrinter<
      *  - Parameter str: The warning.
      */
     public override func warning(str: String) {
+        let pre = "warning: "
+        let str = self.space(str, length: pre.count)
         print(
-            "\u{001B}[1;93mwarning: \u{001B}[0m\(str)",
+            "\u{001B}[1;93m\(pre)\u{001B}[0m\(str)",
             terminator: "\n",
             to: &super.warningStream
         )
+    }
+
+    fileprivate func space(_ str: String, length: Int) -> String {
+#if NO_FOUNDATION || !canImport(Foundation)
+        let lines = str.split("\n")
+#else
+        let lines = str.components(separatedBy: .newlines)
+#endif
+        let spacedLines = lines.enumerated().map {
+            $0 == 0 ? $1 : String([Character](repeating: " ", count: length)) + $1
+        }
+        return spacedLines.combine("") { $0 + "\n" + $1 }
     }
 
 }
