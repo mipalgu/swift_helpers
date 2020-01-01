@@ -116,14 +116,14 @@ public class CommandLinePrinter<
 
     fileprivate func space(_ str: String, length: Int) -> String {
 #if NO_FOUNDATION || !canImport(Foundation)
-        let lines = str.split("\n")
+        let lines = str.split(separator: "\n")
 #else
         let lines = str.components(separatedBy: .newlines)
 #endif
         let spacedLines = lines.enumerated().map {
             $0 == 0 ? $1 : String([Character](repeating: " ", count: length)) + $1
         }
-        return spacedLines.combine("") { $0 + "\n" + $1 }
+        return String(spacedLines.combine("") { $0 + "\n" + $1 })
     }
 
 }
