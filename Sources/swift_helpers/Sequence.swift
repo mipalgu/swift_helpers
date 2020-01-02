@@ -109,20 +109,53 @@ extension Collection where
      *  let result = data.combine("") { $0 + " " + $1 } // "first second third"
      *  ```
      *
-     *  Use this function over reduce if your sequence may contain only one
-     *  element:
+     *  Use this function over reduce if you only want the transformation
+     *  function to be applied to the elements, not the initial result:
      *
+     *  ```
+     *  let data = ["first", "second", "third"]
+     *
+     *  // Combine by placing a space between each element:
+     *  let result = data.combine("") { $0 + " " + $1 } // "first second third"
+     *
+     *  // Common erroneous use of reduce:
+     *  let result = data.reduce("") { $0 + " " + $1 } // " first second third" <- extra space prepended to first
+     *
+     *  // Correct handling using reduce:
+     *  let result = data.dropFirst().reduce(data.first ?? "") { $0 + " " + $1 } // "first second third"
+     *  ```
+     *
+     *  This function works with single element sequences:
      *  ```
      *  let data = ["first"]
      *
-     *  // Handling single element sequences using combine:
+     *  // Combine by placing a space between each element:
      *  let result = data.combine("") { $0 + " " + $1 } // "first"
      *
-     *  // Common erroneous use of reduce:
-     *  let result = data.reduce("") { $0 + " " + $1 } // " first"
+     *  // Again, common erroneous use of reduce:
+     *  let result = data.reduce("") { $0 + " " + $1 } // " first" <- extra space prepended to first
      *
-     *  // Correct handling of single element sequences using reduce:
+     *  // Correct handling using reduce:
      *  let result = data.dropFirst().reduce(data.first ?? "") { $0 + " " + $1 } // "first"
+     *  ```
+     *
+     *  The `failSafe` value is returned if the sequence is empty:
+     *  ```
+     *  let data: [String] = []
+     *  let result = data.combine("") { $0 + " " + $1 } // ""
+     *  ```
+     *
+     *  Often it is necessary to transform the elements in the sequence before
+     *  combining them. This can be achieved in two steps:
+     *
+     *  ```
+     *  let nums: [Int] = [1, 2, 3, 4]
+     *
+     *  // Converting the Int's to Strings before combining them:
+     *  let result = nums.lazy.map { String($0) }.combine("") { $0 + " " + $1 } // "1 2 3 4"
+     *
+     *  // Equivalent functionality using reduce:
+     *  let result = nums.dropFirst().reduce(nums.first.map { String($0) } ?? "") { $0 + " " + String($1) } // "1 2 3 4"
      *  ```
      *
      *  - Parameter failSafe: A value that is returned if the sequence is empty.
