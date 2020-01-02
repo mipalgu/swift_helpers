@@ -94,6 +94,48 @@ extension Collection where
     Self.SubSequence.SubSequence.Iterator.Element == Self.Iterator.Element
 {
 
+    /**
+     *  Reduce a sequence into a single value.
+     *
+     *  If the sequence is empty then `failSafe` is returned, if the
+     *  sequence only contains 1 element then that element is returned,
+     *  otherwise, the result of `transform` applied to all elements
+     *  in order is returned.
+     *
+     *  This function is helpful, for example, when combining strings:
+     *
+     *  ```
+     *  let data = ["first", "second", "third"]
+     *  let result = data.combine("") { $0 + " " + $1 } // "first second third"
+     *  ```
+     *
+     *  Use this function over reduce if your sequence may contain only one
+     *  element:
+     *
+     *  ```
+     *  let data = ["first"]
+     *
+     *  // Handling single element sequences using combine:
+     *  let result = data.combine("") { $0 + " " + $1 } // "first"
+     *
+     *  // Common erroneous use of reduce:
+     *  let result = data.reduce("") { $0 + " " + $1 } // " first"
+     *
+     *  // Correct handling of single element sequences using reduce:
+     *  let result = data.dropFirst().reduce(data.first ?? "") { $0 + " " + $1 } // "first"
+     *  ```
+     *
+     *  - Parameter failSafe: A value that is returned if the sequence is empty.
+     *
+     *  - Parameter transform: A function that combines two elements into a
+     *  single element.
+     *
+     *  - Returns: A single element which is the result of combining all
+     *  elements within the sequence into a single element.
+     *
+     *  - Complexity: O(n)
+     *
+     */
     public func combine(
         _ failSafe: Self.Iterator.Element,
         _ transform: (Self.Iterator.Element, Self.Iterator.Element) throws -> Self.Iterator.Element
