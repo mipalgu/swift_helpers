@@ -56,8 +56,24 @@
  *
  */
 
+/**
+ * A value which represents a possible choice between two distinct types
+ * of values.
+ *
+ * `Either` provides the ability to specify two types of values for a field.
+ * `Either` is similar to the concept of `Result` as well as `Optional`.
+ * `Optional` and `Result` both model the idea of specifying two cases of
+ * values --- the existence of a value or not in the case of `Optional` and
+ * success or failure in the case of `Result`. `Either` represents the more
+ * general case of simply having two types of values. `Either` represents
+ * these two cases as either `left` or `right`.
+ */
 public enum Either<T, U> {
     
+    /**
+     *  A helpful getter for retrieving the `left` case. If `Self` is
+     *  not `left` then this returns nil.
+     */
     public var left: T? {
         switch self {
         case .left(let value):
@@ -67,6 +83,10 @@ public enum Either<T, U> {
         }
     }
     
+    /**
+    *  A helpful getter for retrieving the `right` case. If `Self` is
+    *  not `right` then this returns nil.
+    */
     public var right: U? {
         switch self {
         case .right(let value):
@@ -76,12 +96,17 @@ public enum Either<T, U> {
         }
     }
     
+    /**
+     *  The `left` case and associated value.
+     */
     case left(_ value: T)
+    
+    /**
+     *  The `right` case and associated value.
+     */
     case right(_ value: U)
     
 }
-
-
 
 extension Either: Equatable where T: Equatable, U: Equatable {}
 extension Either: Hashable where T: Hashable, U: Hashable {}
