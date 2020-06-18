@@ -71,27 +71,39 @@ public class EitherTests: XCTestCase {
     }
     
     public func test_equalLeftSide() {
-        let lhs: Either<Int, Never> = .left(3)
-        let rhs: Either<Int, Never> = .left(3)
+        let lhs = Either<Int, Never>(left: 3)
+        let rhs = Either<Int, Never>(left: 3)
         XCTAssertEqual(lhs, rhs)
+        XCTAssertEqual(lhs.left, rhs.left)
+        XCTAssertEqual(lhs.right, rhs.right)
+        XCTAssertNil(lhs.right)
     }
     
     public func test_notEqualLeftSide() {
-        let lhs: Either<Int, Never> = .left(3)
-        let rhs: Either<Int, Never> = .left(4)
+        let lhs = Either<Int, Never>(left: 3)
+        let rhs = Either<Int, Never>(left: 4)
         XCTAssertNotEqual(lhs, rhs)
+        XCTAssertNotEqual(lhs.left, rhs.left)
+        XCTAssertEqual(lhs.right, rhs.right)
+        XCTAssertNil(lhs.right)
     }
     
     public func test_equalRightSide() {
-        let lhs: Either<Never, Int> = .right(3)
-        let rhs: Either<Never, Int> = .right(3)
+        let lhs = Either<Never, Int>(right: 3)
+        let rhs = Either<Never, Int>(right: 3)
         XCTAssertEqual(lhs, rhs)
+        XCTAssertEqual(lhs.right, rhs.right)
+        XCTAssertEqual(lhs.left, rhs.left)
+        XCTAssertNil(lhs.left)
     }
     
     public func test_notEqualRightSide() {
-        let lhs: Either<Never, Int> = .right(3)
-        let rhs: Either<Never, Int> = .right(4)
+        let lhs = Either<Never, Int>(right: 3)
+        let rhs = Either<Never, Int>(right: 4)
         XCTAssertNotEqual(lhs, rhs)
+        XCTAssertNotEqual(lhs.right, rhs.right)
+        XCTAssertEqual(lhs.left, rhs.left)
+        XCTAssertNil(lhs.left)
     }
 
 }

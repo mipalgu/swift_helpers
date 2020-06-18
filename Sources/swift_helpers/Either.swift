@@ -106,6 +106,24 @@ public enum Either<T, U> {
      */
     case right(_ value: U)
     
+    /**
+     *  Create a `left` case.
+     *
+     *  - Parameter `left`: The value associated with the left case.
+     */
+    public init(left value: T) {
+        self = .left(value)
+    }
+    
+    /**
+     *  Create a `right` case.
+     *
+     *  - Parameter `right`: The value associated with the right case.
+     */
+    public init(right value: U) {
+        self = .right(value)
+    }
+    
 }
 
 extension Either: Equatable where T: Equatable, U: Equatable {}
