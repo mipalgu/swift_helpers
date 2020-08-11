@@ -278,3 +278,60 @@ extension Collection where
     }
 
 }
+
+extension Sequence where Self: MutableCollection {
+    
+    public mutating func partialSort(limit: Int, _ compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) {
+        if self.isEmpty {
+            return
+        }
+        func partition(start: Self.Index, end: Self.Index) -> Self.Index {
+            let pivot = self[end]
+            var i = start
+            var j = start
+            while j < end {
+                if compare(self[j], pivot) {
+                    self.swapAt(i, j)
+                    i = self.index(after: i)
+                }
+                j = self.index(after: j)
+            }
+            self.swapAt(i, end)
+            return i
+        }
+        func compute(start: Self.Index, end: Self.Index, targetIndex: Self.Index) {
+            if start >= end {
+                return
+            }
+            let p = partition(start: start, end: end)
+            compute(start: start, end: self.index(p, offsetBy: -1), targetIndex: targetIndex)
+            if p < self.index(targetIndex, offsetBy: -1) {
+                compute(start: self.index(after: p), end: end, targetIndex: targetIndex)
+            }
+        }
+        compute(
+            start: self.startIndex,
+            end: self.index(self.startIndex, offsetBy: self.count - 1),
+            targetIndex: self.index(self.startIndex, offsetBy: limit)
+        )
+    }
+    
+    public func partialSorted(limit: Int, _ compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) -> Self {
+        var copy = self
+        copy.partialSort(limit: limit, compare)
+        return copy
+    }
+    
+}
+
+extension Sequence where Self: MutableCollection, Self.Iterator.Element: Comparable {
+    
+    public mutating func partialSort(limit: Int) {
+        self.partialSort(limit: limit, <)
+    }
+    
+    public func partialSorted(limit: Int) -> Self {
+        return self.partialSorted(limit: limit, <)
+    }
+    
+}

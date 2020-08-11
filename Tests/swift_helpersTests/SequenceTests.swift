@@ -181,5 +181,12 @@ public class SequenceTests: XCTestCase {
             _ = arr.filter { $0 == 0 }
         }
     }
+    
+    public func test_partialSort() {
+        let limit = 3
+        let arr = [5, 4, 3, 2, 1, 10, 12, 123, 10, 11, 12, 13, 14, 15, 16, 17, 18, -5, -1, -7]
+        let result = arr.partialSorted(limit: limit)
+        XCTAssertEqual(Array(result[..<limit]), [-7, -5, -1])
+    }
 
 }
