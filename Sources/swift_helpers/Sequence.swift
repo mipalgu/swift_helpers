@@ -279,13 +279,14 @@ extension Collection where
 
 }
 
-extension Sequence where Self: MutableCollection {
+extension Sequence where Self: RandomAccessCollection, Self: MutableCollection {
     
-    public mutating func partialSort(limit: Int, _ compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) {
+    @inlinable
+    public mutating func sort(limit: Int, by compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) {
         if self.isEmpty {
             return
         }
-        func partition(start: Self.Index, end: Self.Index) -> Self.Index {
+        @inline(__always) func partition(start: Self.Index, end: Self.Index) -> Self.Index {
             let pivot = self[end]
             var i = start
             var j = start
@@ -299,7 +300,7 @@ extension Sequence where Self: MutableCollection {
             self.swapAt(i, end)
             return i
         }
-        func compute(start: Self.Index, end: Self.Index, targetIndex: Self.Index) {
+        @inline(__always) func compute(start: Self.Index, end: Self.Index, targetIndex: Self.Index) {
             if start >= end {
                 return
             }
@@ -316,22 +317,25 @@ extension Sequence where Self: MutableCollection {
         )
     }
     
-    public func partialSorted(limit: Int, _ compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) -> Self {
+    @inlinable
+    public func sorted(limit: Int, by compare: (Self.Iterator.Element, Self.Iterator.Element) -> Bool) -> Self {
         var copy = self
-        copy.partialSort(limit: limit, compare)
+        copy.sort(limit: limit, by: compare)
         return copy
     }
     
 }
 
-extension Sequence where Self: MutableCollection, Self.Iterator.Element: Comparable {
+extension Sequence where Self: RandomAccessCollection, Self: MutableCollection, Self.Iterator.Element: Comparable {
     
-    public mutating func partialSort(limit: Int) {
-        self.partialSort(limit: limit, <)
+    @inlinable
+    public mutating func sort(limit: Int) {
+        self.sort(limit: limit, by: <)
     }
     
-    public func partialSorted(limit: Int) -> Self {
-        return self.partialSorted(limit: limit, <)
+    @inlinable
+    public func sorted(limit: Int) -> Self {
+        return self.sorted(limit: limit, by: <)
     }
     
 }

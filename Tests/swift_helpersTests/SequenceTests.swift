@@ -61,6 +61,8 @@ import XCTest
 
 public class SequenceTests: XCTestCase {
 
+    private static let bigArr: [Int] = Array(0..<10000).shuffled()
+    
     public static var allTests: [(String, (SequenceTests) -> () throws -> Void)] {
         return [
             ("test_binarySearchReturnsNoElementsWhenNoneAreFound", test_binarySearchReturnsNoElementsWhenNoneAreFound),
@@ -77,8 +79,18 @@ public class SequenceTests: XCTestCase {
             ("test_filterPerformanceMissing", test_filterPerformanceMissing)
         ]
     }
+    
+    fileprivate func createArray(count: Int) -> [Int] {
+        let ones = Array(repeating: 1, count: count)
+        let twos = Array(repeating: 2, count: count)
+        let threes = Array(repeating: 3, count: count)
+        let fours = Array(repeating: 4, count: count)
+        let fives = Array(repeating: 5, count: count)
+        let arr = threes + fours + fives + twos + ones
+        return arr
+    }
 
-    fileprivate func createArray(count: Int) -> SortedCollection<Int> {
+    fileprivate func createSortedCollection(count: Int) -> SortedCollection<Int> {
         let ones = Array(repeating: 1, count: count)
         let twos = Array(repeating: 2, count: count)
         let threes = Array(repeating: 3, count: count)
@@ -147,7 +159,7 @@ public class SequenceTests: XCTestCase {
     }
 
     public func test_performance() {
-        let arr = self.createArray(count: 100000)
+        let arr = self.createSortedCollection(count: 100000)
         measure {
             _ = arr.find(1)
             _ = arr.find(2)
@@ -158,7 +170,7 @@ public class SequenceTests: XCTestCase {
     }
 
     public func test_filterPerformance() {
-        let arr = self.createArray(count: 100000)
+        let arr = self.createSortedCollection(count: 100000)
         measure {
             _ = arr.filter { $0 == 1 }
             _ = arr.filter { $0 == 2 }
@@ -169,14 +181,14 @@ public class SequenceTests: XCTestCase {
     }
 
     public func test_performanceMissing() {
-        let arr = self.createArray(count: 1000000)
+        let arr = self.createSortedCollection(count: 1000000)
         measure {
             _ = arr.find(0)
         }
     }
 
     public func test_filterPerformanceMissing() {
-        let arr = self.createArray(count: 1000000)
+        let arr = self.createSortedCollection(count: 1000000)
         measure {
             _ = arr.filter { $0 == 0 }
         }
@@ -185,8 +197,26 @@ public class SequenceTests: XCTestCase {
     public func test_partialSort() {
         let limit = 3
         let arr = [5, 4, 3, 2, 1, 10, 12, 123, 10, 11, 12, 13, 14, 15, 16, 17, 18, -5, -1, -7]
-        let result = arr.partialSorted(limit: limit)
+        let result = arr.sorted(limit: limit)
         XCTAssertEqual(Array(result[..<limit]), [-7, -5, -1])
+    }
+    
+    public func test_partialSortPerformance() {
+        let limit = 3
+        var arr = Self.bigArr
+        measure {
+            arr.sort(limit: limit)
+            _ = arr[..<limit]
+        }
+    }
+    
+    public func test_partialSortUsingSortPerformance() {
+        let limit = 3
+        var arr = Self.bigArr
+        measure {
+            arr.sort()
+            _ = arr[..<limit]
+        }
     }
 
 }
