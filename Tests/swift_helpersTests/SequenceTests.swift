@@ -98,6 +98,57 @@ public class SequenceTests: XCTestCase {
         let fives = Array(repeating: 5, count: count)
         return SortedCollection(sortedArray: ones + twos + threes + fours + fives)
     }
+    
+    public func test_sortedCollectionOrdering() {
+        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let col: SortedCollection<Int> = SortedCollection(unsortedSequence: arr)
+        XCTAssertEqual(arr, Array(col))
+        guard let result = col.first else {
+            XCTFail("arr.first returns nil.")
+            return
+        }
+        XCTAssertEqual(1, result)
+    }
+    
+    public func test_sortedCollectionOrderingDescending() {
+        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        let col = SortedCollection<Int>(unsortedSequence: arr) {
+            if $0 < $1 {
+                return .orderedDescending
+            }
+            if $0 > $1 {
+                return .orderedAscending
+            }
+            return .orderedSame
+        }
+        XCTAssertEqual(Array(arr.reversed()), Array(col))
+        guard let first = col.first else {
+            XCTFail("col.first returns nil")
+            return
+        }
+        XCTAssertEqual(5, first)
+    }
+    
+    public func test_sortedCollectionOrderingDescendingInsertingManually() {
+        let arr = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
+        var col = SortedCollection<Int> {
+            if $0 < $1 {
+                return .orderedDescending
+            }
+            if $0 > $1 {
+                return .orderedAscending
+            }
+            return .orderedSame
+        }
+        XCTAssertTrue(col.isEmpty)
+        arr.forEach { col.insert($0) }
+        XCTAssertEqual(Array(arr.reversed()), Array(col))
+        guard let first = col.first else {
+            XCTFail("col.first returns nil")
+            return
+        }
+        XCTAssertEqual(5, first)
+    }
 
     public func test_binarySearchReturnsNoElementsWhenNoneAreFound() {
         let arr: SortedCollection<Int> = [1, 1, 1, 1, 2, 3, 3, 4, 5, 5, 5, 5, 5]
