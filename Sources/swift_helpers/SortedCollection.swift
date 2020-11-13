@@ -345,6 +345,10 @@ extension SortedCollection: RandomAccessCollection {
 
 extension SortedCollection: SortedOperations {
 
+    public mutating func empty() {
+        self.data = []
+    }
+
     public mutating func insert(_ element: Element) {
         self.data.insert(element, at: self.search(for: element).1)
     }

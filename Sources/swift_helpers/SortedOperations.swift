@@ -72,6 +72,8 @@ public protocol SortedOperations: RandomAccessCollection {
 
     func contains(_ element: Element) -> Bool
 
+    mutating func empty()
+
     func range(of: Element) -> Range<Index>
 
     func firstIndex(of: Element) -> Index?
