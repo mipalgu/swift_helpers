@@ -84,4 +84,15 @@ extension String {
     
 }
 
+extension URL {
+    
+    public init?(pathToExecutable executable: String, foundInEnvironmentVariables envVars: [String] = []) {
+        guard let path = String(pathToExecutable: executable, foundInEnvironmentVariables: envVars) else {
+            return nil
+        }
+        self.init(fileURLWithPath: path, isDirectory: false)
+    }
+    
+}
+
 #endif
