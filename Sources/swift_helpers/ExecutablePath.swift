@@ -64,8 +64,9 @@ extension String {
     
     public init?(pathToExecutable executable: String, foundInEnvironmentVariables envVars: [String] = []) {
         let env = ProcessInfo.processInfo.environment
-        print(env.keys.sorted())
-        if let path = envVars.lazy.compactMap({ env[$0] }).first {
+        let fm = FileManager.default
+        var isDirectory: ObjCBool = false
+        if let path = envVars.lazy.compactMap({ env[$0] }).first(where: { fm.fileExists(atPath: $0, isDirectory: &isDirectory) && !isDirectory.boolValue }) {
             self = path
             return
         }
@@ -73,8 +74,6 @@ extension String {
         let executablePaths = paths.lazy.map {
             URL(fileURLWithPath: $0, isDirectory: true).appendingPathComponent(executable)
         }
-        let fm = FileManager.default
-        var isDirectory: ObjCBool = false
         if let path = executablePaths.first(where: { fm.fileExists(atPath: $0.path, isDirectory: &isDirectory) && !isDirectory.boolValue }) {
             self = path.path
             return
