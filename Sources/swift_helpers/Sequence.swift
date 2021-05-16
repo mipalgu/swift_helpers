@@ -339,3 +339,64 @@ extension Sequence where Self: RandomAccessCollection, Self: MutableCollection, 
     }
     
 }
+
+#if canImport(SwiftUI) || canImport(TokamakShim)
+#if canImport(SwiftUI)
+import SwiftUI
+#else
+import TokamakShim
+#endif
+
+extension Collection where Self: RangeReplaceableCollection, Self.Index == Int {
+    
+    /// Removes elements within `offsets`, and, for each element about to be
+    /// deleted, calls `forEach`.
+    ///
+    /// This function allows you to include a callback function that is called
+    /// before deleting an element. This allows u to perform logic in response
+    /// to an element being deleted:
+    /// ```
+    /// class Container {
+    ///
+    ///     var index: Int
+    ///
+    ///     init(index: Int) { self.index = index }
+    ///
+    /// }
+    ///
+    /// var arr = [1, 2, 3, 4]
+    /// var containers = arr.indices.map { Container(index: $0) }
+    ///
+    /// // Sync the indexes within containers when deleting elements from arr.
+    /// arr.remove(atOffsets: [0, 2]) { (index, nextIndex, deletedBefore) in
+    ///     container[(index + 1)..<nextIndex].index -= deletedBefore
+    ///     container.remove(at: index)
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///     - offsets: An `IndexSet` containing a set of unique integer
+    ///     indexes to be removed from this collection.
+    ///     - forEach: A function that is triggered before deleting an
+    ///     element from the collection.
+    ///     - index: The index for the element being deleted.
+    ///     - nextIndex: The next index in the index set in
+    ///     ascending order. If `index` is the last index then `nextIndex` will
+    ///     be equal to the count.
+    ///     - previouslyDeleted: The number of elements before this
+    ///     element that were deleted.
+    mutating func remove(atOffsets offsets: IndexSet, forEach: (_ index: Int, _ nextIndex: Int, _ previouslyDeleted: Int) -> Void) {
+        var indexes = offsets.sorted(by: >)
+        var lastIndex = self.count
+        var decrement = indexes.count
+        while (!indexes.isEmpty) {
+            let index = indexes.removeFirst()
+            forEach(index, lastIndex, decrement)
+            self.remove(at: index)
+            decrement -= 1
+            lastIndex = index
+        }
+    }
+    
+}
+#endif
