@@ -385,7 +385,7 @@ extension Collection where Self: RangeReplaceableCollection, Self.Index == Int {
     ///     be equal to the count.
     ///     - previouslyDeleted: The number of elements before this
     ///     element that were deleted.
-    mutating func remove(atOffsets offsets: IndexSet, forEach: (_ index: Int, _ nextIndex: Int, _ previouslyDeleted: Int) -> Void) {
+    public mutating func remove(atOffsets offsets: IndexSet, forEach: (_ index: Int, _ nextIndex: Int, _ previouslyDeleted: Int) -> Void) {
         var indexes = offsets.sorted(by: >)
         var lastIndex = self.count
         var decrement = indexes.count
