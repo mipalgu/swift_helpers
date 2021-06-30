@@ -62,7 +62,7 @@ import Foundation
 #endif
 #endif
 
-extension Collection where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
+extension Collection {
 
     public func trim(
         _ shouldTrim: (Self.Iterator.Element) throws -> Bool
@@ -74,7 +74,6 @@ extension Collection where Self.SubSequence: Sequence, Self.SubSequence.Iterator
 }
 
 extension Collection where
-    Self.SubSequence: Sequence,
     Self.SubSequence.Iterator.Element == Self.Iterator.Element,
     Self.Iterator.Element: Equatable
 {
@@ -88,9 +87,7 @@ extension Collection where
 }
 
 extension Collection where
-    Self.SubSequence: Sequence,
     Self.SubSequence.Iterator.Element == Self.Iterator.Element,
-    Self.SubSequence.SubSequence: Sequence,
     Self.SubSequence.SubSequence.Iterator.Element == Self.Iterator.Element
 {
 
@@ -218,7 +215,7 @@ extension Sequence where Self.Iterator.Element: Comparable {
 
 }
 
-extension Collection where Self.SubSequence: Sequence, Self.SubSequence.Iterator.Element == Self.Iterator.Element {
+extension Collection {
 
     /**
      *  Split a sequence int sub-arrays where each sub-array contains elements
@@ -256,11 +253,7 @@ extension Collection where Self.SubSequence: Sequence, Self.SubSequence.Iterator
 }
 
 //swiftlint:disable opening_brace
-extension Collection where
-    Self.SubSequence: Sequence,
-    Self.SubSequence.Iterator.Element == Self.Iterator.Element,
-    Self.Iterator.Element: Equatable
-{
+extension Collection where Self.Iterator.Element: Equatable {
 
     /**
      *  Split a sequence into sub-arrays where each sub-array contains elements
