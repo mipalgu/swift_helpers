@@ -62,11 +62,17 @@ import Foundation
 
 open class FileWrapper {
     
-    public enum WritingOptions {
+    public struct WritingOptions: OptionSet {
         
-        case atomic
+        static var atomic: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 1)
         
-        case withNameUpdating
+        static var withNameUpdating: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 2)
+
+        public var rawValue: UInt
+
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
         
     }
 
@@ -101,7 +107,7 @@ open class FileWrapper {
         self.fileWrappers = directoryWithFileWrappers
     }
 
-    open func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws {
+    open func write(to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?) throws {
         let writeURL: URL
         if let name = name {
             if path.lastPathComponent != name {
@@ -116,7 +122,7 @@ open class FileWrapper {
             guard let contents = regularFileContents else {
                 return
             }
-            try contents.write(to: writeURL)
+            try contents.write(to: writeURL, options: Data.WritingOptions(rawValue: options.rawValue))
             return
         }
         guard let wrappers = fileWrappers else {
