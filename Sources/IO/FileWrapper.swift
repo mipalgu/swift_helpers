@@ -60,7 +60,7 @@
 
 import Foundation
 
-public class FileWrapper {
+open class FileWrapper {
     
     public enum WritingOptions {
         
