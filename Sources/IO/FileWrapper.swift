@@ -56,9 +56,19 @@
  *
  */
 
-#if os(linux) && canImport(Foundation) && !NO_FOUNDATION
+#if os(Linux) && canImport(Foundation) && !NO_FOUNDATION
+
+import Foundation
 
 public class FileWrapper {
+    
+    public enum WritingOptions {
+        
+        case atomic
+        
+        case withNameUpdating
+        
+    }
 
     public var fileName: String?
 
@@ -75,6 +85,13 @@ public class FileWrapper {
     public var isDirectory: Bool {
         !isRegularFile
     }
+    
+    private var name: String? {
+        if let preferred = preferredFilename {
+            return preferred
+        }
+        return fileName
+    }
 
     public init(regularFileWithContents: Data) {
         self.regularFileContents = regularFileWithContents
@@ -84,8 +101,32 @@ public class FileWrapper {
         self.fileWrappers = directoryWithFileWrappers
     }
 
-    public func write(to: URL, options: FileWrapper.WritingOptions, original ContentsURL: URL?) {
-        
+    public func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws -> Bool {
+        let writeURL: URL
+        if let name = name {
+            writeURL = path.appendingPathComponent(name)
+        } else {
+            writeURL = path
+        }
+        if isRegularFile {
+            guard let contents = regularFileContents else {
+                return false
+            }
+            let result: ()? = try? contents.write(to: writeURL)
+            return result != nil
+        }
+        guard let wrappers = fileWrappers else {
+            return false
+        }
+        let result: [Bool] = wrappers.enumerated().flatMap { (input: (String, FileWrapper)) -> Bool in
+            let name = input.0
+            let wrapper = input.1
+            let url = writeURL.appendingPathComponent(name)
+            return try wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL)
+        }
+        return result.reduce(true) {
+            $0 && $1
+        }
     }
 
 }
