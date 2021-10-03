@@ -64,9 +64,9 @@ open class FileWrapper {
     
     public struct WritingOptions: OptionSet {
         
-        static var atomic: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 1)
+        public static var atomic: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 1)
         
-        static var withNameUpdating: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 2)
+        public static var withNameUpdating: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 2)
 
         public var rawValue: UInt
 
