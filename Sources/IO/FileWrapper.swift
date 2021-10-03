@@ -104,7 +104,11 @@ public class FileWrapper {
     public func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws -> Bool {
         let writeURL: URL
         if let name = name {
-            writeURL = path.appendingPathComponent(name)
+            if path.lastPathComponent != name {
+                writeURL = path.appendingPathComponent(name)
+            } else {
+                writeURL = path
+            }
         } else {
             writeURL = path
         }
@@ -118,11 +122,12 @@ public class FileWrapper {
         guard let wrappers = fileWrappers else {
             return false
         }
-        let result: [Bool] = wrappers.enumerated().flatMap { (input: (String, FileWrapper)) -> Bool in
-            let name = input.0
-            let wrapper = input.1
+        let result: [Bool] = try wrappers.map { (name: String, wrapper: FileWrapper) throws -> Bool in
             let url = writeURL.appendingPathComponent(name)
-            return try wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL)
+            guard let result = try? wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL) else {
+                return false
+            }
+            return result
         }
         return result.reduce(true) {
             $0 && $1
