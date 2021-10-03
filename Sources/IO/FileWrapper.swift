@@ -101,7 +101,7 @@ open class FileWrapper {
         self.fileWrappers = directoryWithFileWrappers
     }
 
-    open func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws -> Bool {
+    open func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws {
         let writeURL: URL
         if let name = name {
             if path.lastPathComponent != name {
@@ -114,23 +114,17 @@ open class FileWrapper {
         }
         if isRegularFile {
             guard let contents = regularFileContents else {
-                return false
+                return
             }
-            let result: ()? = try? contents.write(to: writeURL)
-            return result != nil
+            try contents.write(to: writeURL)
+            return
         }
         guard let wrappers = fileWrappers else {
-            return false
+            return
         }
-        let result: [Bool] = try wrappers.map { (name: String, wrapper: FileWrapper) throws -> Bool in
+        try wrappers.forEach{ (name: String, wrapper: FileWrapper) throws in
             let url = writeURL.appendingPathComponent(name)
-            guard let result = try? wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL) else {
-                return false
-            }
-            return result
-        }
-        return result.reduce(true) {
-            $0 && $1
+            try wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL) 
         }
     }
 
