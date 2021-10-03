@@ -101,7 +101,7 @@ open class FileWrapper {
         self.fileWrappers = directoryWithFileWrappers
     }
 
-    public func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws -> Bool {
+    open func write(to path: URL, options: FileWrapper.WritingOptions, originalContentsURL: URL?) throws -> Bool {
         let writeURL: URL
         if let name = name {
             if path.lastPathComponent != name {
