@@ -76,6 +76,19 @@ open class FileWrapper {
         
     }
 
+    public struct ReadingOptions: OptionSet {
+
+        public static var immediate: FileWrapper.ReadingOptions = FileWrapper.ReadingOptions(rawValue: 1)
+
+        public static var withoutMapping: FileWrapper.ReadingOptions = FileWrapper.ReadingOptions(rawValue: 2)
+
+        public var rawValue: UInt
+
+        public init(rawValue: UInt) {
+            self.rawValue = rawValue
+        }
+    }
+
     public var filename: String?
 
     public var preferredFilename: String?
@@ -105,6 +118,16 @@ open class FileWrapper {
 
     public init(directoryWithFileWrappers: [String: FileWrapper]) {
         self.fileWrappers = directoryWithFileWrappers
+    }
+
+    public init(url: URL, options: FileWrapper.ReadingOptions = []) throws {
+        self.preferredFilename = url.lastPathComponent
+        if url.isFileURL {
+            let data = try Data(contentsOf: url, options: Data.ReadingOptions(rawValue: options.rawValue))
+            self.regularFileContents = data
+            return
+        }
+        self.fileWrappers = [:]
     }
 
     public func addFileWrapper(_ child: FileWrapper) -> String {
