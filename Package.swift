@@ -55,6 +55,9 @@ let package = Package(
             dependencies: ["Hashing"]),
         .testTarget(
             name: "TreesTests",
-            dependencies: ["Trees"])
+            dependencies: ["Trees"]),
+        .testTarget(
+            name: "IOTests",
+            dependencies: ["IO"])
     ]
 )
