@@ -107,6 +107,26 @@ open class FileWrapper {
         self.fileWrappers = directoryWithFileWrappers
     }
 
+    public func addFileWrapper(_ child: FileWrapper) -> String {
+        guard var wrappers = fileWrappers else {
+            return ""
+        }
+        if let childName = child.preferredFilename {
+            if wrappers[childName] == nil {
+                wrappers[childName] = child
+                fileWrappers = wrappers
+                return childName
+            }
+        }
+        var newName = UUID().uuidString
+        repeat {
+            newName = UUID().uuidString
+        } while (wrappers[newName] != nil)
+        wrappers[newName] = child
+        fileWrappers = wrappers
+        return newName
+    }
+
     open func write(to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?) throws {
         let writeURL: URL
         if let name = name {
