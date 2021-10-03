@@ -122,6 +122,10 @@ public final class FileHelpers {
         return directoryExists.boolValue
     }
 
+    public func fileExists(_ dir: String) -> Bool {
+        self.fm.fileExists(atPath: dir)
+    }
+
     public func makeSubDirectory(_ subdir: String, inDirectory dir: URL) -> URL? {
         let fullPath = dir.appendingPathComponent(subdir, isDirectory: true)
         guard true == self.createDirectory(atPath: fullPath) else {

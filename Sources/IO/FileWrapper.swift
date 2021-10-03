@@ -105,11 +105,16 @@ open class FileWrapper {
         !isRegularFile
     }
     
-    private var name: String? {
+    private var name: String {
+        if let name = filename {
+            return name
+        }
         if let preferred = preferredFilename {
+            filename = preferred
             return preferred
         }
-        return filename
+        filename = UUID().uuidString
+        return filename!
     }
 
     public init(regularFileWithContents: Data) {
@@ -151,19 +156,14 @@ open class FileWrapper {
     }
 
     open func write(to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?) throws {
-        let writeURL: URL
-        if let name = name {
-            if path.lastPathComponent != name {
-                writeURL = path.appendingPathComponent(name)
-            } else {
-                writeURL = path
-            }
-        } else {
-            writeURL = path
-        }
+        let writeURL = path.appendingPathComponent(name)
+        let helper = FileHelpers()
         if isRegularFile {
             guard let contents = regularFileContents else {
                 return
+            }
+            if !helper.fileExists(writeURL.absoluteString) {
+                helper.createFile(name, inDirectory: path, withContents: "")
             }
             try contents.write(to: writeURL, options: Data.WritingOptions(rawValue: options.rawValue))
             return
@@ -171,9 +171,11 @@ open class FileWrapper {
         guard let wrappers = fileWrappers else {
             return
         }
+        if !helper.directoryExists(writeURL.absoluteString) {
+            helper.makeSubDirectory(name, inDirectory: path)
+        }
         try wrappers.forEach{ (name: String, wrapper: FileWrapper) throws in
-            let url = writeURL.appendingPathComponent(name)
-            try wrapper.write(to: url, options: options, originalContentsURL: originalContentsURL) 
+            try wrapper.write(to: writeURL, options: options, originalContentsURL: originalContentsURL) 
         }
     }
 
