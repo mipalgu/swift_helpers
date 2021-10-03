@@ -70,7 +70,7 @@ open class FileWrapper {
         
     }
 
-    public var fileName: String?
+    public var filename: String?
 
     public var preferredFilename: String?
 
@@ -90,7 +90,7 @@ open class FileWrapper {
         if let preferred = preferredFilename {
             return preferred
         }
-        return fileName
+        return filename
     }
 
     public init(regularFileWithContents: Data) {
