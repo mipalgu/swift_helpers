@@ -85,6 +85,8 @@ public class FileWrapperTests: XCTestCase {
         XCTAssertTrue(true)
     }
 
+#if os(Linux)
+
     func testWriteFileWrapper() {
         guard let contents = "Hello World!".data(using: .utf8) else {
             XCTAssertTrue(false)
@@ -92,8 +94,11 @@ public class FileWrapperTests: XCTestCase {
         }
         let wrapper = FileWrapper(regularFileWithContents: contents)
         let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/FileWrapperTest.txt")
-        let result = try? wrapper.write(to: url, originalContentsURL: nil)
+        let result: ()? = try? wrapper.write(to: url, originalContentsURL: nil)
         XCTAssertNotNil(result)
     }
 
+
+
+#endif
 }
