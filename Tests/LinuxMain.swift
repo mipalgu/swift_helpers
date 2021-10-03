@@ -4,9 +4,9 @@ import XCTest
 @testable import IOTests
 
 XCTMain([
-    testCase(FileWrapperTests.allTests),
     testCase(SequenceTests.allTests),
     testCase(StringHelpersTests.allTests),
     testCase(HashSinkTests.allTests),
-    testCase(HashTableTests.allTests)
+    testCase(HashTableTests.allTests),
+    testCase(FileWrapperTests.allTests)
 ])

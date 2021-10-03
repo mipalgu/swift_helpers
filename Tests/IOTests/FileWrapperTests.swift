@@ -67,7 +67,8 @@ public class FileWrapperTests: XCTestCase {
     public static var allTests: [(String, (FileWrapperTests) -> () throws -> Void)] {
         return [
             ("testHelloWorld", testHelloWorld),
-            ("testWriteFileWrapper", testWriteFileWrapper)
+            ("testWriteFileWrapper", testWriteFileWrapper),
+            ("testWriteDirectory", testWriteDirectory)
         ]
     }
 #else
@@ -93,9 +94,35 @@ public class FileWrapperTests: XCTestCase {
             return
         }
         let wrapper = FileWrapper(regularFileWithContents: contents)
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/FileWrapperTest.txt")
-        let result: ()? = try? wrapper.write(to: url, originalContentsURL: nil)
-        XCTAssertNotNil(result)
+        wrapper.preferredFilename = "FileWrapperTest.txt"
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/")
+        do {
+            try wrapper.write(to: url, originalContentsURL: nil)
+            XCTAssertTrue(true)
+        } catch {
+            print(error)
+            XCTAssertTrue(false)
+        }
+    }
+
+    func testWriteDirectory() throws {
+        guard let contents = "Subdir Hello World!".data(using: .utf8) else {
+            XCTAssertTrue(false)
+            return
+        }
+        let wrapper = FileWrapper(directoryWithFileWrappers: [:])
+        wrapper.preferredFilename = "testDir"
+        let wrapper2 = FileWrapper(regularFileWithContents: contents)
+        wrapper2.preferredFilename = "data.txt"
+        wrapper.addFileWrapper(wrapper2)
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build")
+        do {
+            try wrapper.write(to: url, originalContentsURL: nil)
+            XCTAssertTrue(true)
+        } catch {
+            print(error)
+            XCTAssertTrue(false)
+        }
     }
 
 
