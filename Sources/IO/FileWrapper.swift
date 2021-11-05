@@ -151,15 +151,20 @@ open class FileWrapper {
             newName = UUID().uuidString
         } while (wrappers[newName] != nil)
         wrappers[newName] = child
+        child.preferredFilename = newName
         fileWrappers = wrappers
         return newName
     }
 
     open func write(to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?) throws {
         let writeURL = path.appendingPathComponent(name)
+        let helper = FileHelpers()
         if isRegularFile {
             guard let contents = regularFileContents else {
                 return
+            }
+            if helper.fileExists(writeURL.absoluteString) {
+                helper.deleteItem(atPath: writeURL)
             }
             try contents.write(to: writeURL, options: Data.WritingOptions(rawValue: options.rawValue))
             return
@@ -167,7 +172,6 @@ open class FileWrapper {
         guard let wrappers = fileWrappers else {
             return
         }
-        let helper = FileHelpers()
         if !helper.directoryExists(writeURL.absoluteString) {
             helper.makeSubDirectory(name, inDirectory: path)
         }
