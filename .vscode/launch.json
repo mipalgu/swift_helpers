@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Test swift_helpers",
+            "program": "${workspaceFolder:swift_helpers}/.build/debug/swift_helpersPackageTests.xctest",
+            "cwd": "${workspaceFolder:swift_helpers}",
+            "preLaunchTask": "swift: Build All"
+        }
+    ]
+}
