@@ -166,14 +166,16 @@ open class FileWrapper {
         return newName
     }
 
-    open func write(to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?) throws {
+    open func write(
+        to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?
+    ) throws {
         let writeURL = path.appendingPathComponent(name)
         let helper = FileHelpers()
         if isRegularFile {
             guard let contents = regularFileContents else {
                 throw FileError.notRegularFile
             }
-            if helper.fileExists(writeURL.absoluteString) {
+            if helper.fileExists(writeURL.path) {
                 guard helper.deleteItem(atPath: writeURL) else {
                     throw FileError.fileNotFound
                 }
@@ -184,14 +186,13 @@ open class FileWrapper {
         guard let wrappers = fileWrappers else {
             return
         }
-        if !helper.directoryExists(writeURL.absoluteString) {
+        if !helper.directoryExists(writeURL.path) {
             guard helper.createDirectory(atPath: writeURL) else {
-                print("Make subdir failed with \(name) in \(path)")
                 throw FileError.fileAlreadyExists
             }
         }
-        try wrappers.forEach{ (name: String, wrapper: FileWrapper) throws in
-            try wrapper.write(to: writeURL, options: options, originalContentsURL: originalContentsURL) 
+        try wrappers.forEach { (_, wrapper) throws in
+            try wrapper.write(to: writeURL, options: options, originalContentsURL: originalContentsURL)
         }
     }
 
