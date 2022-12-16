@@ -89,6 +89,16 @@ open class FileWrapper {
         }
     }
 
+    public enum FileError: Error {
+    
+        case notRegularFile
+
+        case fileNotFound
+
+        case fileAlreadyExists
+
+    }
+
     public var filename: String?
 
     public var preferredFilename: String?
@@ -161,10 +171,12 @@ open class FileWrapper {
         let helper = FileHelpers()
         if isRegularFile {
             guard let contents = regularFileContents else {
-                return
+                throw FileError.notRegularFile
             }
             if helper.fileExists(writeURL.absoluteString) {
-                helper.deleteItem(atPath: writeURL)
+                guard helper.deleteItem(atPath: writeURL) else {
+                    throw FileError.fileNotFound
+                }
             }
             try contents.write(to: writeURL, options: Data.WritingOptions(rawValue: options.rawValue))
             return
@@ -173,7 +185,10 @@ open class FileWrapper {
             return
         }
         if !helper.directoryExists(writeURL.absoluteString) {
-            helper.makeSubDirectory(name, inDirectory: path)
+            guard helper.createDirectory(atPath: writeURL) else {
+                print("Make subdir failed with \(name) in \(path)")
+                throw FileError.fileAlreadyExists
+            }
         }
         try wrappers.forEach{ (name: String, wrapper: FileWrapper) throws in
             try wrapper.write(to: writeURL, options: options, originalContentsURL: originalContentsURL) 

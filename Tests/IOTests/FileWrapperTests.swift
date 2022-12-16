@@ -86,9 +86,7 @@ class FileWrapperTests: XCTestCase {
 
     /// Remove build folder after every test.
     override func tearDown() {
-        if helper.directoryExists(String(buildPath.absoluteString)) {
-            _ = helper.deleteItem(atPath: buildPath)
-        }
+        _ = helper.deleteItem(atPath: buildPath)
     }
 
     /// Test wrapper can write a single file.

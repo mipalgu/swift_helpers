@@ -65,7 +65,7 @@ public final class FileHelpers {
     fileprivate let fm: FileManager
 
     public var cwd: URL? {
-        return URL(string: self.fm.currentDirectoryPath)
+        URL(string: self.fm.currentDirectoryPath)
     }
 
     //swiftlint:disable:next identifier_name
@@ -128,7 +128,7 @@ public final class FileHelpers {
 
     public func makeSubDirectory(_ subdir: String, inDirectory dir: URL) -> URL? {
         let fullPath = dir.appendingPathComponent(subdir, isDirectory: true)
-        guard true == self.createDirectory(atPath: fullPath) else {
+        guard self.createDirectory(atPath: fullPath) else {
             return nil
         }
         return fullPath
@@ -136,8 +136,8 @@ public final class FileHelpers {
 
     public func overwriteDirectory(_ dir: URL) -> URL? {
         guard
-            true == self.deleteItem(atPath: dir),
-            true == self.createDirectory(atPath: dir)
+            self.deleteItem(atPath: dir),
+            self.createDirectory(atPath: dir)
         else {
             return nil
         }
