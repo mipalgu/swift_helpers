@@ -91,6 +91,7 @@ class FileWrapperTests: XCTestCase {
         }
     }
 
+    /// Test wrapper can write a single file.
     func testWriteFileWrapper() throws {
         guard let contents = "Hello World!".data(using: .utf8) else {
             XCTFail("Failed to create data!")
@@ -101,6 +102,7 @@ class FileWrapperTests: XCTestCase {
         try wrapper.write(to: buildPath, originalContentsURL: nil)
     }
 
+    /// Test wrapper can write a directory.
     func testWriteDirectory() throws {
         guard let contents = "Subdir Hello World!".data(using: .utf8) else {
             XCTFail("Failed to create data!")
@@ -114,6 +116,7 @@ class FileWrapperTests: XCTestCase {
         try wrapper.write(to: buildPath, originalContentsURL: nil)
     }
 
+    /// Test FileWrapper can overwrite a file.
     func testOverwriteFile() throws {
         let newContents = "New Hello World!"
         guard
