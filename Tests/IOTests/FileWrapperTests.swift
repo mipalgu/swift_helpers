@@ -59,115 +59,91 @@
 @testable import IO
 import XCTest
 
-public class FileWrapperTests: XCTestCase {
-
-    private let packageRootPath = URL(fileURLWithPath: #file).pathComponents.prefix(while: { $0 != "Tests" }).joined(separator: "/").dropFirst()
-
-#if os(Linux)
-    public static var allTests: [(String, (FileWrapperTests) -> () throws -> Void)] {
-        return [
-            ("testHelloWorld", testHelloWorld),
-            ("testWriteFileWrapper", testWriteFileWrapper),
-            ("testWriteDirectory", testWriteDirectory),
-            ("testOverwriteFile", testOverwriteFile),
-            ("testOverwriteDirectory", testOverwriteDirectory)
-        ]
-    }
-#else
-    public static var allTests: [(String, (FileWrapperTests) -> () throws -> void)] {
-        return []
-    }
-#endif
-
-    public override func setUp() {
-
-    }
-
-    func testHelloWorld() {
-        print(packageRootPath)
-        XCTAssertTrue(true)
-    }
-
 #if os(Linux)
 
-    func testWriteFileWrapper() {
+/// Test class for ``FileWrapper``.
+class FileWrapperTests: XCTestCase {
+
+    /// The path to the package root.
+    private let packageRootPath = URL(fileURLWithPath: #file)
+        .pathComponents.prefix { $0 != "Tests" }.joined(separator: "/").dropFirst()
+
+    /// IO helper.
+    let helper = FileHelpers()
+
+    /// The path to the build folder.
+    var buildPath: URL {
+        URL(fileURLWithPath: String(packageRootPath), isDirectory: true)
+            .appendingPathComponent("Tests/IOTests/build", isDirectory: true)
+    }
+
+    /// Create build path before every test.
+    override func setUp() {
+        if !helper.directoryExists(buildPath.absoluteString) {
+            _ = helper.createDirectory(atPath: buildPath)
+        }
+    }
+
+    /// Remove build folder after every test.
+    override func tearDown() {
+        _ = helper.deleteItem(atPath: buildPath)
+    }
+
+    /// Test wrapper can write a single file.
+    func testWriteFileWrapper() throws {
         guard let contents = "Hello World!".data(using: .utf8) else {
-            XCTAssertTrue(false)
+            XCTFail("Failed to create data!")
             return
         }
         let wrapper = FileWrapper(regularFileWithContents: contents)
         wrapper.preferredFilename = "FileWrapperTest.txt"
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/")
-        do {
-            try wrapper.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
+        try wrapper.write(to: buildPath, originalContentsURL: nil)
     }
 
+    /// Test wrapper can write a directory.
     func testWriteDirectory() throws {
         guard let contents = "Subdir Hello World!".data(using: .utf8) else {
-            XCTAssertTrue(false)
+            XCTFail("Failed to create data!")
             return
         }
         let wrapper = FileWrapper(directoryWithFileWrappers: [:])
         wrapper.preferredFilename = "testDir"
         let wrapper2 = FileWrapper(regularFileWithContents: contents)
         wrapper2.preferredFilename = "data.txt"
-        wrapper.addFileWrapper(wrapper2)
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build")
-        do {
-            try wrapper.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
+        XCTAssertEqual(wrapper.addFileWrapper(wrapper2), "data.txt")
+        try wrapper.write(to: buildPath, originalContentsURL: nil)
     }
 
-    func testOverwriteFile() {
-        guard let contents = "Hello World!".data(using: .utf8) else {
-            XCTAssertTrue(false)
+    /// Test FileWrapper can overwrite a file.
+    func testOverwriteFile() throws {
+        let newContents = "New Hello World!"
+        guard
+            let contents = "Hello World!".data(using: .utf8), let newData = newContents.data(using: .utf8)
+        else {
+            XCTFail("Failed to create data.")
             return
         }
         let fileName = "FileWrapperTest.txt"
         let wrapper = FileWrapper(regularFileWithContents: contents)
         wrapper.preferredFilename = fileName
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/")
-        do {
-            try wrapper.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
-        let newContents = "New Hello World!"
-        guard let newData = newContents.data(using: .utf8) else {
-            XCTAssertTrue(false)
-            return
-        }
+        try wrapper.write(to: buildPath, originalContentsURL: nil)
         let newWrapper = FileWrapper(regularFileWithContents: newData)
         newWrapper.preferredFilename = fileName
-        do {
-            try newWrapper.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
-        guard let readContents = try? String(contentsOf: url.appendingPathComponent(fileName)) else {
-            XCTAssertTrue(false)
+        try newWrapper.write(to: buildPath, originalContentsURL: nil)
+        guard let readContents = try? String(
+            contentsOf: buildPath.appendingPathComponent(fileName, isDirectory: false)
+        ) else {
+            XCTFail("Failed to read file.")
             return
         }
         XCTAssertEqual(readContents, newContents)
     }
 
-    func testOverwriteDirectory() {
+    /// Test FileWrapper successfully overwrite a directory with new data.
+    func testOverwriteDirectory() throws {
         let contents = "Subdir Hello World!"
         guard let contentsData = contents.data(using: .utf8) else {
-            XCTAssertTrue(false)
+            XCTFail("Failed to convert contents to data.")
             return
         }
         let testDir = "testDir"
@@ -176,45 +152,39 @@ public class FileWrapperTests: XCTestCase {
         wrapper.preferredFilename = testDir
         let wrapper2 = FileWrapper(regularFileWithContents: contentsData)
         wrapper2.preferredFilename = dataTxt
-        wrapper.addFileWrapper(wrapper2)
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build")
-        do {
-            try wrapper.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
-        guard let originalContents = try? String(contentsOf: url.appendingPathComponent(testDir).appendingPathComponent(dataTxt)) else {
-            XCTAssertTrue(false)
+        XCTAssertEqual(wrapper.addFileWrapper(wrapper2), dataTxt)
+        try wrapper.write(to: buildPath, originalContentsURL: nil)
+        guard let originalContents = try? String(
+            contentsOf: buildPath.appendingPathComponent(testDir, isDirectory: true).appendingPathComponent(
+                dataTxt, isDirectory: false
+            )
+        ) else {
+            XCTFail("Failed to read new directory!")
             return
         }
         XCTAssertEqual(originalContents, contents)
         let newContents = "Subdir Hello World2!"
         guard let newContentsData = newContents.data(using: .utf8) else {
-            XCTAssertTrue(false)
+            XCTFail("Failed to convert new contents into data.")
             return
         }
         let wrapperDir = FileWrapper(directoryWithFileWrappers: [:])
         wrapperDir.preferredFilename = testDir
         let dataWrapper = FileWrapper(regularFileWithContents: newContentsData)
         dataWrapper.preferredFilename = dataTxt
-        wrapperDir.addFileWrapper(dataWrapper)
-        do {
-            try wrapperDir.write(to: url, originalContentsURL: nil)
-            XCTAssertTrue(true)
-        } catch {
-            print(error)
-            XCTAssertTrue(false)
-        }
-        guard let dataContents = try? String(contentsOf: url.appendingPathComponent(testDir).appendingPathComponent(dataTxt)) else {
-            XCTAssertTrue(false)
+        XCTAssertEqual(wrapperDir.addFileWrapper(dataWrapper), dataTxt)
+        try wrapperDir.write(to: buildPath, originalContentsURL: nil)
+        guard let dataContents = try? String(
+            contentsOf: buildPath.appendingPathComponent(testDir, isDirectory: true).appendingPathComponent(
+                dataTxt, isDirectory: false
+            )
+        ) else {
+            XCTFail("Failed to read dataContents!")
             return
         }
         XCTAssertEqual(dataContents, newContents)
     }
 
-
+}
 
 #endif
-}
