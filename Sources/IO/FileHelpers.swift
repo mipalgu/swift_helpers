@@ -61,33 +61,25 @@ import Foundation
 
 public final class FileHelpers {
 
-    //swiftlint:disable:next identifier_name
     fileprivate let fm: FileManager
 
     public var cwd: URL? {
         URL(string: self.fm.currentDirectoryPath)
     }
 
-    //swiftlint:disable:next identifier_name
     public init(fm: FileManager = FileManager.default) {
         self.fm = fm
     }
 
     public func changeCWD(toPath path: URL) -> Bool {
-        return self.fm.changeCurrentDirectoryPath(path.path)
+        self.fm.changeCurrentDirectoryPath(path.path)
     }
 
     public func createDirectory(atPath path: URL) -> Bool {
-        guard
-            //swiftlint:disable:next unused_optional_binding
-            let _ = try? self.fm.createDirectory(
-                at: path,
-                withIntermediateDirectories: false
-            )
-        else {
-            return false
-        }
-        return true
+        (try? self.fm.createDirectory(
+            at: path,
+            withIntermediateDirectories: false
+        )) != nil
     }
 
     public func createFile(atPath path: URL, withContents str: String) -> Bool {
@@ -99,21 +91,17 @@ public final class FileHelpers {
 
     public func createFile(_ name: String, inDirectory dir: URL, withContents str: String) -> URL? {
         let path = dir.appendingPathComponent(name, isDirectory: false)
-        guard true == self.createFile(atPath: path, withContents: str) else {
+        guard self.createFile(atPath: path, withContents: str) else {
             return nil
         }
         return path
     }
 
     public func deleteItem(atPath path: URL) -> Bool {
-        if false == self.fm.fileExists(atPath: path.path) {
+        if !self.fm.fileExists(atPath: path.path) {
             return true
         }
-        //swiftlint:disable:next unused_optional_binding
-        guard let _ = try? self.fm.removeItem(at: path) else {
-            return false
-        }
-        return true
+        return (try? self.fm.removeItem(at: path)) != nil
     }
 
     public func directoryExists(_ dir: String) -> Bool {
@@ -145,7 +133,7 @@ public final class FileHelpers {
     }
 
     public func overwriteDirectory(_ dir: URL, ignoringSubFiles subfiles: [URL]) -> URL? {
-        guard false == subfiles.isEmpty, let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
+        guard !subfiles.isEmpty, let contents = try? self.fm.contentsOfDirectory(atPath: dir.path) else {
             return self.overwriteDirectory(dir)
         }
         let deleteFiles = contents.lazy.map { URL(fileURLWithPath: $0) }.filter { subfile in
@@ -157,8 +145,9 @@ public final class FileHelpers {
         return dir
     }
 
-    //swiftlint:disable:next line_length
-    public func overwriteSubDirectory(_ subdir: String, inDirectory dir: URL, ignoringSubFiles subfiles: [URL] = []) -> URL? {
+    public func overwriteSubDirectory(
+        _ subdir: String, inDirectory dir: URL, ignoringSubFiles subfiles: [URL] = []
+    ) -> URL? {
         let fullPath = dir.appendingPathComponent(subdir, isDirectory: true)
         return self.overwriteDirectory(fullPath, ignoringSubFiles: subfiles)
     }
@@ -169,11 +158,11 @@ public final class FileHelpers {
     }
 
     public func read(_ file: URL) -> String? {
-        return (try? Data(contentsOf: file)).flatMap { String(data: $0, encoding: .utf8) }
+        (try? Data(contentsOf: file)).flatMap { String(data: $0, encoding: .utf8) }
     }
 
     public func read(_ file: String) -> String? {
-        return self.read(URL(fileURLWithPath: file))
+        self.read(URL(fileURLWithPath: file))
     }
 
 }
