@@ -61,32 +61,8 @@ import XCTest
 
 public class FileWrapperTests: XCTestCase {
 
-    private let packageRootPath = URL(fileURLWithPath: #file).pathComponents.prefix(while: { $0 != "Tests" }).joined(separator: "/").dropFirst()
-
-#if os(Linux)
-    public static var allTests: [(String, (FileWrapperTests) -> () throws -> Void)] {
-        return [
-            ("testHelloWorld", testHelloWorld),
-            ("testWriteFileWrapper", testWriteFileWrapper),
-            ("testWriteDirectory", testWriteDirectory),
-            ("testOverwriteFile", testOverwriteFile),
-            ("testOverwriteDirectory", testOverwriteDirectory)
-        ]
-    }
-#else
-    public static var allTests: [(String, (FileWrapperTests) -> () throws -> void)] {
-        return []
-    }
-#endif
-
-    public override func setUp() {
-
-    }
-
-    func testHelloWorld() {
-        print(packageRootPath)
-        XCTAssertTrue(true)
-    }
+    private let packageRootPath = URL(fileURLWithPath: #file)
+        .pathComponents.prefix(while: { $0 != "Tests" }).joined(separator: "/").dropFirst()
 
 #if os(Linux)
 
@@ -97,7 +73,8 @@ public class FileWrapperTests: XCTestCase {
         }
         let wrapper = FileWrapper(regularFileWithContents: contents)
         wrapper.preferredFilename = "FileWrapperTest.txt"
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/")
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true)
+            .appendingPathComponent("Tests/IOTests/build/")
         do {
             try wrapper.write(to: url, originalContentsURL: nil)
             XCTAssertTrue(true)
@@ -117,7 +94,8 @@ public class FileWrapperTests: XCTestCase {
         let wrapper2 = FileWrapper(regularFileWithContents: contents)
         wrapper2.preferredFilename = "data.txt"
         wrapper.addFileWrapper(wrapper2)
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build")
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true)
+            .appendingPathComponent("Tests/IOTests/build")
         do {
             try wrapper.write(to: url, originalContentsURL: nil)
             XCTAssertTrue(true)
@@ -135,7 +113,8 @@ public class FileWrapperTests: XCTestCase {
         let fileName = "FileWrapperTest.txt"
         let wrapper = FileWrapper(regularFileWithContents: contents)
         wrapper.preferredFilename = fileName
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build/")
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true)
+            .appendingPathComponent("Tests/IOTests/build/")
         do {
             try wrapper.write(to: url, originalContentsURL: nil)
             XCTAssertTrue(true)
@@ -177,7 +156,8 @@ public class FileWrapperTests: XCTestCase {
         let wrapper2 = FileWrapper(regularFileWithContents: contentsData)
         wrapper2.preferredFilename = dataTxt
         wrapper.addFileWrapper(wrapper2)
-        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true).appendingPathComponent("Tests/IOTests/build")
+        let url = URL(fileURLWithPath: String(packageRootPath), isDirectory: true)
+            .appendingPathComponent("Tests/IOTests/build")
         do {
             try wrapper.write(to: url, originalContentsURL: nil)
             XCTAssertTrue(true)
@@ -185,7 +165,8 @@ public class FileWrapperTests: XCTestCase {
             print(error)
             XCTAssertTrue(false)
         }
-        guard let originalContents = try? String(contentsOf: url.appendingPathComponent(testDir).appendingPathComponent(dataTxt)) else {
+        guard let originalContents = try? String(contentsOf: url.appendingPathComponent(testDir)
+            .appendingPathComponent(dataTxt)) else {
             XCTAssertTrue(false)
             return
         }
@@ -207,14 +188,14 @@ public class FileWrapperTests: XCTestCase {
             print(error)
             XCTAssertTrue(false)
         }
-        guard let dataContents = try? String(contentsOf: url.appendingPathComponent(testDir).appendingPathComponent(dataTxt)) else {
+        guard let dataContents = try? String(contentsOf: url.appendingPathComponent(testDir)
+            .appendingPathComponent(dataTxt)) else {
             XCTAssertTrue(false)
             return
         }
         XCTAssertEqual(dataContents, newContents)
     }
 
-
-
 #endif
+
 }
