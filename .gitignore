@@ -2,4 +2,15 @@
 /.build
 /Packages
 /*.xcodeproj
+*.smv
+*.gv
+*.pdf
+*.gexf
+*.tlp
+*.png
+*.svg
 config.sh
+testbuild
+Package.resolved
+.vscode
+default.profraw
