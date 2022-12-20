@@ -97,6 +97,8 @@ open class FileWrapper {
 
         case fileAlreadyExists
 
+        case cannotGetFileName
+
     }
 
     public var filename: String?
@@ -137,12 +139,24 @@ open class FileWrapper {
 
     public init(url: URL, options: FileWrapper.ReadingOptions = []) throws {
         self.preferredFilename = url.lastPathComponent
-        if url.isFileURL {
+        guard url.isFileURL else {
+            self.fileWrappers = [:]
+            return
+        }
+        guard url.hasDirectoryPath else {
             let data = try Data(contentsOf: url, options: Data.ReadingOptions(rawValue: options.rawValue))
             self.regularFileContents = data
             return
         }
-        self.fileWrappers = [:]
+        let manager = FileManager()
+        let urls = try manager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+        self.fileWrappers = Dictionary(uniqueKeysWithValues: try urls.map {
+            let wrapper = try FileWrapper(url: $0)
+            guard let fileName = wrapper.preferredFilename else {
+                throw FileError.cannotGetFileName
+            }
+            return (fileName, wrapper)
+        })
     }
 
     public func addFileWrapper(_ child: FileWrapper) -> String {

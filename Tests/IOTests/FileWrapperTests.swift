@@ -185,6 +185,28 @@ class FileWrapperTests: XCTestCase {
         XCTAssertEqual(dataContents, newContents)
     }
 
+    func testURLInitDirectory() throws {
+        XCTAssertTrue(helper.createFile(
+            atPath: buildPath.appendingPathComponent("foo", isDirectory: false), withContents: "bar"
+        ))
+        let wrapper = try FileWrapper(url: buildPath)
+        XCTAssertTrue(wrapper.isDirectory)
+        XCTAssertFalse(wrapper.isRegularFile)
+        XCTAssertEqual(wrapper.preferredFilename, "build")
+        guard let fileContents = wrapper.fileWrappers, let data = "bar".data(using: .utf8) else {
+            XCTFail("Failed to get file contents!")
+            return
+        }
+        XCTAssertEqual(fileContents.count, 1)
+        guard let file = fileContents["foo"] else {
+            XCTFail("Failed to get file!")
+            return
+        }
+        XCTAssertTrue(file.isRegularFile)
+        XCTAssertEqual(file.preferredFilename, "foo")
+        XCTAssertEqual(file.regularFileContents, data)
+    }
+
 }
 
 #endif
