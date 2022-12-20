@@ -185,6 +185,7 @@ class FileWrapperTests: XCTestCase {
         XCTAssertEqual(dataContents, newContents)
     }
 
+    /// Test URL init reads folder contents correctly.
     func testURLInitDirectory() throws {
         XCTAssertTrue(helper.createFile(
             atPath: buildPath.appendingPathComponent("foo", isDirectory: false), withContents: "bar"
