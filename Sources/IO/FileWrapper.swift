@@ -101,7 +101,14 @@ open class FileWrapper {
 
     }
 
-    public var filename: String?
+    public var filename: String? {
+        get {
+            preferredFilename
+        }
+        set {
+            self.preferredFilename = newValue
+        }
+    }
 
     public var preferredFilename: String?
 
