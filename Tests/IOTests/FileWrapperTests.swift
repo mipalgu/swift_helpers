@@ -102,7 +102,8 @@ class FileWrapperTests: XCTestCase {
 
     /// Test wrapper can write a directory.
     func testWriteDirectory() throws {
-        guard let contents = "Subdir Hello World!".data(using: .utf8) else {
+        let raw = "Subdir Hello World!"
+        guard let contents = raw.data(using: .utf8) else {
             XCTFail("Failed to create data!")
             return
         }
@@ -112,6 +113,12 @@ class FileWrapperTests: XCTestCase {
         wrapper2.preferredFilename = "data.txt"
         XCTAssertEqual(wrapper.addFileWrapper(wrapper2), "data.txt")
         try wrapper.write(to: buildPath, originalContentsURL: nil)
+        let testDir = buildPath.appendingPathComponent("testDir", isDirectory: true)
+        XCTAssertTrue(helper.directoryExists(testDir.path))
+        let dataTxt = testDir.appendingPathComponent("data.txt", isDirectory: false)
+        XCTAssertTrue(helper.fileExists(dataTxt.path))
+        let data = try String(contentsOf: dataTxt)
+        XCTAssertEqual(data, raw)
     }
 
     /// Test FileWrapper can overwrite a file.
