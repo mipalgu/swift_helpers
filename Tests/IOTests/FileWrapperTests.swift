@@ -112,8 +112,8 @@ class FileWrapperTests: XCTestCase {
         let wrapper2 = FileWrapper(regularFileWithContents: contents)
         wrapper2.preferredFilename = "data.txt"
         XCTAssertEqual(wrapper.addFileWrapper(wrapper2), "data.txt")
-        try wrapper.write(to: buildPath, originalContentsURL: nil)
         let testDir = buildPath.appendingPathComponent("testDir", isDirectory: true)
+        try wrapper.write(to: testDir, originalContentsURL: nil)
         XCTAssertTrue(helper.directoryExists(testDir.path))
         let dataTxt = testDir.appendingPathComponent("data.txt", isDirectory: false)
         XCTAssertTrue(helper.fileExists(dataTxt.path))

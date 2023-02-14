@@ -90,6 +90,8 @@ open class FileWrapper {
     }
 
     public enum FileError: Error {
+
+        case notDirectory
     
         case notRegularFile
 
@@ -123,7 +125,9 @@ open class FileWrapper {
     public var isDirectory: Bool {
         !isRegularFile
     }
-    
+
+    private let helper = FileHelpers()
+
     private var name: String {
         if let name = filename {
             return name
@@ -190,30 +194,37 @@ open class FileWrapper {
     open func write(
         to path: URL, options: FileWrapper.WritingOptions = [], originalContentsURL: URL?
     ) throws {
-        let writeURL = path.appendingPathComponent(name)
-        let helper = FileHelpers()
         if isRegularFile {
-            guard let contents = regularFileContents else {
+            guard path.isFileURL, let contents = regularFileContents else {
                 throw FileError.notRegularFile
             }
-            if helper.fileExists(writeURL.path) {
-                guard helper.deleteItem(atPath: writeURL) else {
+            if helper.fileExists(path.path) {
+                guard helper.deleteItem(atPath: path) else {
                     throw FileError.fileNotFound
                 }
             }
-            try contents.write(to: writeURL, options: Data.WritingOptions(rawValue: options.rawValue))
+            try contents.write(to: path, options: Data.WritingOptions(rawValue: options.rawValue))
             return
+        }
+        guard path.hasDirectoryPath else {
+            throw FileError.notDirectory
         }
         guard let wrappers = fileWrappers else {
             return
         }
-        if !helper.directoryExists(writeURL.path) {
-            guard helper.createDirectory(atPath: writeURL) else {
+        if !helper.directoryExists(path.path) {
+            guard helper.createDirectory(atPath: path) else {
                 throw FileError.fileAlreadyExists
             }
         }
         try wrappers.forEach { (_, wrapper) throws in
-            try wrapper.write(to: writeURL, options: options, originalContentsURL: originalContentsURL)
+            try wrapper.write(
+                to: path.appendingPathComponent(wrapper.name, isDirectory: wrapper.isDirectory),
+                options: options,
+                originalContentsURL: originalContentsURL?.appendingPathComponent(
+                    wrapper.name, isDirectory: wrapper.isDirectory
+                )
+            )
         }
     }
 
