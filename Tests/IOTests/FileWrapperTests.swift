@@ -91,13 +91,18 @@ class FileWrapperTests: XCTestCase {
 
     /// Test wrapper can write a single file.
     func testWriteFileWrapper() throws {
-        guard let contents = "Hello World!".data(using: .utf8) else {
+        let raw = "Hello World!"
+        guard let contents = raw.data(using: .utf8) else {
             XCTFail("Failed to create data!")
             return
         }
         let wrapper = FileWrapper(regularFileWithContents: contents)
+        XCTAssertTrue(wrapper.isRegularFile)
+        XCTAssertFalse(wrapper.isDirectory)
         wrapper.preferredFilename = "FileWrapperTest.txt"
-        try wrapper.write(to: buildPath, originalContentsURL: nil)
+        let path = buildPath.appendingPathComponent("FileWrapperTest.txt", isDirectory: false)
+        try wrapper.write(to: path, originalContentsURL: nil)
+        XCTAssertEqual(try String(contentsOf: path), raw)
     }
 
     /// Test wrapper can write a directory.
@@ -108,6 +113,8 @@ class FileWrapperTests: XCTestCase {
             return
         }
         let wrapper = FileWrapper(directoryWithFileWrappers: [:])
+        XCTAssertTrue(wrapper.isDirectory)
+        XCTAssertFalse(wrapper.isRegularFile)
         wrapper.preferredFilename = "testDir"
         let wrapper2 = FileWrapper(regularFileWithContents: contents)
         wrapper2.preferredFilename = "data.txt"
