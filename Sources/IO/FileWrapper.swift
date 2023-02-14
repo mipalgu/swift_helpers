@@ -92,7 +92,7 @@ open class FileWrapper {
     public enum FileError: Error {
 
         case notDirectory
-    
+
         case notRegularFile
 
         case fileNotFound
@@ -209,15 +209,14 @@ open class FileWrapper {
         guard path.hasDirectoryPath else {
             throw FileError.notDirectory
         }
+        guard !helper.directoryExists(path.path), helper.createDirectory(atPath: path) else {
+            _ = helper.deleteItem(atPath: path)
+            throw FileError.fileAlreadyExists
+        }
         guard let wrappers = fileWrappers else {
             return
         }
-        if !helper.directoryExists(path.path) {
-            guard helper.createDirectory(atPath: path) else {
-                throw FileError.fileAlreadyExists
-            }
-        }
-        try wrappers.forEach { (_, wrapper) throws in
+        try wrappers.sorted { $0.0 < $1.0 }.forEach { _, wrapper throws in
             try wrapper.write(
                 to: path.appendingPathComponent(wrapper.name, isDirectory: wrapper.isDirectory),
                 options: options,
