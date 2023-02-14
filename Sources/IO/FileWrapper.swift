@@ -61,19 +61,21 @@
 import Foundation
 
 open class FileWrapper {
-    
+
     public struct WritingOptions: OptionSet {
-        
+
         public static var atomic: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 1)
-        
-        public static var withNameUpdating: FileWrapper.WritingOptions = FileWrapper.WritingOptions(rawValue: 2)
+
+        public static var withNameUpdating: FileWrapper.WritingOptions = FileWrapper.WritingOptions(
+            rawValue: 2
+        )
 
         public var rawValue: UInt
 
         public init(rawValue: UInt) {
             self.rawValue = rawValue
         }
-        
+
     }
 
     public struct ReadingOptions: OptionSet {
