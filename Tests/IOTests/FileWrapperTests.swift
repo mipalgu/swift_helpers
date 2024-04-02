@@ -59,7 +59,7 @@
 @testable import IO
 import XCTest
 
-#if os(Linux)
+#if os(Linux) || os(Windows)
 
 /// Test class for ``FileWrapper``.
 class FileWrapperTests: XCTestCase {
