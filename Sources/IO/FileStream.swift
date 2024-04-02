@@ -61,7 +61,7 @@
  #elseif os(Linux)
  import Glibc
  #elseif os(Windows)
- import MSVCRT
+ import CRT
  #endif
 
 /**
