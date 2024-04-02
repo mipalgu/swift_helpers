@@ -60,6 +60,8 @@
  import Darwin
  #elseif os(Linux)
  import Glibc
+ #elseif os(Windows)
+ import CRT
  #endif
 
 /**
@@ -133,6 +135,8 @@ public class FileStream: InputOutputStream {
         Darwin.rewind(self.file)
  #elseif os(Linux)
         Glibc.rewind(self.file)
+ #elseif os(Windows)
+        CRT.rewind(self.file)
  #endif
     }
 
