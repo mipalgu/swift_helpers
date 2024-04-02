@@ -60,6 +60,8 @@
  import Darwin
  #elseif os(Linux)
  import Glibc
+ #elseif os(Windows)
+ import CRT
  #endif
 
 /**
