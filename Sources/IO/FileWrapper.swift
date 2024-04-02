@@ -56,7 +56,7 @@
  *
  */
 
-#if os(Linux) && canImport(Foundation) && !NO_FOUNDATION
+#if (os(Linux) || os(Windows)) && canImport(Foundation) && !NO_FOUNDATION
 
 import Foundation
 
